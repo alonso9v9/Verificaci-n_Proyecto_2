@@ -96,6 +96,8 @@ typedef mailbox #(Trans_in)mlbx_gen_agte;                  //MAILBOX GENERADOR-A
 
 typedef mailbox #(Trans_in)mlbx_agte_drv;                  //MAILBOX AGENTE-DRIVER
 
+typedef mailbox #(Trans_in)mlbx_drv_disp;                  //MAILBOX DRIVER-DISPOSITIVO
+
 typedef mailbox #(Trans_in)mlbx_agte_chckr;                //MAILBOX AGENTE-CHECKER
 
 typedef mailbox #(Trans_out)mlbx_mntr_chckr;               //MAILBOX MONITOR-CHECKER
