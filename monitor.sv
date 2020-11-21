@@ -5,11 +5,11 @@
 // Definición de la clase del monitor
 `include "transacciones.sv"
 
+// Esta clase monitorea cada dispositivo individualmente
 class read_dvc #(parameter pckg_sz=32, int tag = 0);
 	mlbx_mntr_chckr to_chckr_mlbx;
 	Trans_out #(.pckg_sz(pckg_sz)) to_chckr;
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
-
 
 	task run();
 		$display("[%t] Monitor %d inicializado", $time, tag);
@@ -27,16 +27,24 @@ class read_dvc #(parameter pckg_sz=32, int tag = 0);
 				begin
 					to_chckr.tipo = normal;
 				end
-
+				to_chckr_mlbx.put(to_chckr);
+				to_chckr.print("[Monitor] Tansacción leída")
 			end
 			@(posedge vif.clk);
 		end
-		
 	endtask
-
 
 endclass
 
-class monitor();
+class monitor #(parameter pckg_sz=32);
+	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
+
+	mlbx_mntr_chckr to_chckr_mlbx_p [15:0]; // Mailboxes para cada dispositivo
+//	Trans_out #(.pckg_sz(pckg_sz)) to_chckr_p [15:0];
 	
+	for (int i = 0; i < 16; i++) begin : _n
+		read_dvc #(.pckg_sz(pckg_sz),.tag(i)) mntr;
+		mntr.vif = vif;
+		$display("Monitor número %d",mntr.tag);
+	end
 endclass
