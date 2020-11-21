@@ -26,7 +26,7 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10,parameter id=0);
 
 	task run();
 		
-		$display("[%g] Dispositivo %g inicializado",$time,id);
+		$display("[%g] [Dispositivo=%g] inicializado",$time,id);
 
 		@(posedge vif.clk);
 		forever begin
@@ -39,7 +39,7 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10,parameter id=0);
       		drv_disp_mbx.get(transaction);
       		transaction.print("[Dispositivo] Recibio la transaccion");
 
-      		$display("Transacciones pendientes en el mbx drv_disp %g = %g",id,drv_disp_mbx.num());
+      		$display("[T=%g] [Dispositivo] Transacciones pendientes en el mbx drv_disp %g = %g",id,drv_disp_mbx.num());
 
       		Data={transaction.Nxt_jump, transaction.Target, transaction.mode, transaction.payload};
       		vif.data_out_i_in[transaction.Origen]=Fifo_in[$];
