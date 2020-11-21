@@ -22,7 +22,10 @@ class read_dvc #(parameter pckg_sz=32, int tag = 0);
 				to_chckr.payloadO 	= vif.data_out[pckg_sz-18:0];
 				vif.pop = 1;
 				if (vif.reset) begin
-					/* code */
+					to_chckr.tipo = reset;
+				end else
+				begin
+					to_chckr.tipo = normal;
 				end
 
 			end

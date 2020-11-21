@@ -75,16 +75,18 @@ class Trans_out#(parameter pckg_sz=32);//transaccion del mensaje que entra al DU
     bit [pckg_sz-17:pckg_sz-17] modeO;
     bit [pckg_sz-18:0] payloadO;
     int  delayO;
+    tipos_accion tipo;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s Nxt_jump=%b, Target=%b, Modo=%b, Payload=%0d, Delay= %0d",
+    $display("[T=%g] %s Nxt_jump=%b, Target=%b, Modo=%b, Payload=%0d, Delay= %0d, Tipo = %0s",
              $time,
              tag, 
              this.Nxt_jumpO,
              this.TargetO,
              this.modeO,
              this.payloadO,
-             this.delayO
+             this.delayO,
+             this.tipo
              );
   endfunction
   
