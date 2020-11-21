@@ -11,27 +11,22 @@
 //
 
 
-class disp #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
+class disp #(parameter pckg_sz=16,parameter Fif_Size=10,parameter id=0);
 	
     virtual Mesh_if #(.width(width)) vif;
 
     bit [pckg_sz-1,0] Data;
 
-    Trans_disp_mbx drv_disp_mbx;
-    Trans_disp #(.pckg_sz(pckg_sz)) transaction;
+    mlbx_drv_disp drv_disp_mbx;
+    Trans_in #(.pckg_sz(pckg_sz)) transaction;
 
     bit Fifo_in[$:Fif_Size-1];
-
     int espera;   
-	
+
 
 	task run();
-		$display("[%g] Dispositivo %g inicializado",$time,transaction.Origen);
 		
-		//Reset del sistema en el primer ciclo de reloj
-
-		@(posedge vif.clk);
-		vif.reset=1;
+		$display("[%g] Dispositivo %g inicializado",$time,id);
 
 		@(posedge vif.clk);
 		forever begin
@@ -40,10 +35,11 @@ class disp #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 			espera = 0;
 
       		@(posedge vif.clk);
-      		$display("[%g] el dispositivo %g espera por una transacción",$time,transaction.Origen);				
+      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion",$time,id);				
       		drv_disp_mbx.get(transaction);
-      		transaction.print("Dispositivo %g recibio la transaccion",transaction.Origen);
-      		$display("Transacciones pendientes en el mbx drv_disp %g = %g",transaction.Origen,agnt_drv_mbx.num());
+      		transaction.print("[Dispositivo] Recibio la transaccion");
+
+      		$display("Transacciones pendientes en el mbx drv_disp %g = %g",id,drv_disp_mbx.num());
 
       		Data={transaction.Nxt_jump, transaction.Target, transaction.mode, transaction.payload};
       		vif.data_out_i_in[transaction.Origen]=Fifo_in[$];
@@ -60,17 +56,17 @@ class disp #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
       				Fifo_in.push_front(Data); 	
 					vif.pndng_i_in[transaction.Origen]=1;
 					transaction.tiempo = $time;
-	     			transaction.print("Dispositivo: Transaccion ejecutada");
+	     			transaction.print("[Dispositivo] Transaccion ejecutada");
 				end
 
 				reset:begin
 					vif.reset=1;
 					transaction.tiempo = $time;
-					transaction.print("Dispositivo: Transaccion ejecutada");
+					transaction.print("[Dispositivo] Transaccion ejecutada");
 				end
 
 				default:begin
-					$display("[%g] Driver Error: la transacción recibida no tiene tipo valido",$time);
+					$display("[T=%g] [Dispositivo Error] la transacción recibida no tiene tipo valido",$time);
 	   	 			$finish;
 				end
 			endcase // transaction.tipo
