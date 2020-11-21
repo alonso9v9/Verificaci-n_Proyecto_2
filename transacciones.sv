@@ -31,6 +31,7 @@ interface intfz#(parameter pckg_sz)(input bit clk);
       bit pop[16];                                                  //input
       bit [pckg_sz-1:0]data_out_i_in[16];                           //input
       bit pndng_i_in[16];                                           //input
+      bit reset;													//input
 endinterface
 
 //*********************************TRANSACCION LADO DRIVER***********************************
