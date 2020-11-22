@@ -1,14 +1,7 @@
-// Curso: EL-5811 Taller de Comunicaciones Electricas
-// Tecnologico de Costa Rica (www.tec.ac.cr)
-// Código consultado y adaptado: https://estudianteccr.sharepoint.com/sites/VerificacinFuncional/Documentos%20compartidos/General/Test_CR_fifo.zip -Realizado por: RONNY GARCIA RAMIREZ 
-// Desarrolladores:
-// José Agustín Delgado-Sancho (ahusjads@gmail.com)
-// Alonso Vega-Badilla (alonso9v9@gmail.com)
-// Este script esta estructurado en System Verilog
-// Proposito General:
-// Modulo Driver del testbench de un bus serial
-//
-//
+///////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////Verificación de Circuitos Integrados////////////////////////////
+/////////////////////////////////////Proyecto 2////////////////////////////////////////////
+/////////////////////////Felipe Rojas, Agustín Degado, Alonso Vega/////////////////////////
 
 
 class disp #(parameter pckg_sz=16,parameter Fif_Size=10,parameter id=0);

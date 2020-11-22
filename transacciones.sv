@@ -3,19 +3,12 @@
 /////////////////////////////////////Proyecto 2////////////////////////////////////////////
 /////////////////////////Felipe Rojas, Agustín Degado, Alonso Vega/////////////////////////
 
+
 // Definición de transacciones e interfaces del test
 
 
-//****************************DEFINICION DE TIPOS DE ORIGEN********************************
-typedef enum{orin_aleat,orin_espec} tipos_orin;
-
-
-//****************************DEFINICION DE TIPOS DE DESTINO********************************
-typedef enum{dtnt_aleat,dtny_espec, broadcast } tipos_dtny;
-
-
-//***************************DEFINICION DE TIPOS DE LLENADO DE PAYLOAD**********************
-typedef enum{pyld_aleat,pyld_espec} tipos_pyld;
+//****************************DEFINICION DE TIPOS DE LLENADO********************************
+typedef enum{llenado_aleat,llenado_espec} tipos_llenado;
 
 
 //********************************DEFINICION DE ACCION *************************************
@@ -31,7 +24,7 @@ interface intfz#(parameter pckg_sz)(input bit clk);
       bit pop[16];                                                  //input
       bit [pckg_sz-1:0]data_out_i_in[16];                           //input
       bit pndng_i_in[16];                                           //input
-      bit reset;													//input
+      bit reset;													                          //input
 endinterface
 
 //*********************************TRANSACCION LADO DRIVER***********************************
