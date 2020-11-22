@@ -5,10 +5,11 @@
 // Definición de la clase del monitor
 
 // Esta clase monitorea cada dispositivo individualmente
-class read_dvc #(parameter pckg_sz=32, int tag = 0);
+class read_dvc #(parameter pckg_sz=32);
 	mlbx_mntr_chckr to_chckr_mlbx;
 	Trans_out #(.pckg_sz(pckg_sz)) to_chckr;
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
+	int tag = 0;
 
 	task run();
 		$display("[%t] Monitor %d inicializado", $time, tag);
@@ -27,7 +28,7 @@ class read_dvc #(parameter pckg_sz=32, int tag = 0);
 					to_chckr.tipo = normal;
 				end
 				to_chckr_mlbx.put(to_chckr);
-				to_chckr.print("[Monitor] Tansacción leída")
+				to_chckr.print("[Monitor] Tansacción leída");
 			end
 			@(posedge vif.clk);
 		end
@@ -35,15 +36,21 @@ class read_dvc #(parameter pckg_sz=32, int tag = 0);
 
 endclass
 
+// Falta el fork!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class monitor #(parameter pckg_sz=32);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
 	mlbx_mntr_chckr to_chckr_mlbx_p [15:0]; // Mailboxes para cada dispositivo
+	read_dvc #(.pckg_sz(pckg_sz)) dvcs [15:0];
 
 	task run();
-		for (int i = 0; i < 16; i++) begin : _n
-			read_dvc #(.pckg_sz(pckg_sz),.tag(i)) mntr;
-			mntr.vif = vif;
-			$display("Monitor número %d",mntr.tag);
+		for (int i = 0; i < 16; i++) begin
+			automatic int auto_i = i;
+			fork
+				dvcs[auto_i].tag = auto_i;
+				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p;
+				dvcs[auto_i].vif = vif;
+				dvcs[auto_i].run();
+			join_none
 		end		
 	endtask
 
