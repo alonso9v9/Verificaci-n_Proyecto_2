@@ -18,7 +18,7 @@
 `include "driver.sv"
 `include "monitor.sv"
 
-`include "rand.sv"
+`include "Rand_Parameters.sv"
 
 import Rand_Parameters::*;
 

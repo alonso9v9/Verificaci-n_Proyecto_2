@@ -15,18 +15,20 @@ module random;
     int unsigned COLUMS =4; 
     rand int unsigned pckg_sz;
     rand int unsigned fifo_depth;
-    bit bdcst= {8{1'b1}};
+    bit [7:0]bdcst= 8'b11111111;
 
-    constraint pckg {pckg_sz<100;pckg_sz>32}
+    constraint pckg {pckg_sz<100;pckg_sz>0;}
+    constraint fifs {fifo_depth<100;fifo_depth>32;}
+    
 
     function void printPackage;
-        automatic f = $fopen("Rand_Parameters.sv");
+        int f = $fopen("Rand_Parameters.sv");
         $fdisplay(f, "package Rand_Parameters;");
         $fdisplay(f, "  parameter ROWS = %0d;",ROWS);
         $fdisplay(f, "  parameter COLUMS = %0d;",COLUMS);
         $fdisplay(f, "  parameter pckg_sz = %0d;",pckg_sz);
         $fdisplay(f, "  parameter fifo_depth = %0d;",fifo_depth);
-        $fdisplay(f, "  parameter bdcst = %0b;",bdcst);
+        $fdisplay(f, "  parameter bdcst = %b;",bdcst);
         $fdisplay(f, "endpackage");
     endfunction
 
@@ -35,9 +37,10 @@ module random;
   Params a;
   
   initial begin
-      a = new();
-      a.randomize();
-      a.printPackage();
+    a = new();
+    a.srandom(10);
+    a.randomize();
+    a.printPackage();
   end
 
 endmodule
