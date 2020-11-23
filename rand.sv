@@ -17,7 +17,7 @@ module random;
     rand int fifo_depth;
     bit [7:0]bdcst= 8'b11111111;
 
-    constraint pckg {pckg_sz<100;pckg_sz>0;}
+    constraint pckg {pckg_sz<100;pckg_sz>17;}
     constraint fifs {fifo_depth<100;fifo_depth>32;}
     
 
