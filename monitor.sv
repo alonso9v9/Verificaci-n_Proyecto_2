@@ -1,7 +1,12 @@
-///////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////Verificación de Circuitos Integrados////////////////////////////
-/////////////////////////////////////Proyecto 2////////////////////////////////////////////
-/////////////////////////Felipe Rojas, Agustín Degado, Alonso Vega/////////////////////////
+// Curso: EL-5811 Verificación Funcional de Circuitos integrados
+// Tecnologico de Costa Rica (www.tec.ac.cr)
+// Profesor: Ronny García Ramírez 
+// Desarrolladores:
+// Felipe Josue Rojas-Barrantes (fjrojas.cr@gmail.com)
+// José Agustín Delgado-Sancho (ahusjads@gmail.com)
+// Luis Alonso Vega-Badilla (alonso9v9@gmail.com)
+// Este script esta estructurado en System Verilog
+
 // Definición de la clase del monitor
 
 // Esta clase monitorea cada dispositivo individualmente
