@@ -36,7 +36,8 @@ endinterface
 class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
   rand   bit [pckg_sz-1:pckg_sz-8] Nxt_jump;
   randc  bit [pckg_sz-9:pckg_sz-16] Target; 
-  randc  bit [7:0] Origen; 
+  //randc  bit [7:0] Origen; 
+  randc int Origen;
   
   rand   bit [pckg_sz-17:pckg_sz-17] mode;
   rand   bit [pckg_sz-18:0] payload;
@@ -47,7 +48,8 @@ class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
   bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
   // Restringir las direcciones al aleatorizar
   constraint limittar {Target inside {dir};}
-  constraint limitorin {Origen inside {dir};}
+  //constraint limitorin {Origen inside {dir};}
+  constraint limitorin {0<=Origen;Origen<=15;}
   constraint limitnxtjump {Nxt_jump inside {dir};}
   constraint limitdly {0<=delay;delay<=3;}
   
@@ -92,13 +94,13 @@ endclass
 
 //********************************DEFINICION DE MAILBOXES***********************************
 
-typedef mailbox #(Trans_in)mlbx_gen_agte;                  //MAILBOX GENERADOR-AGENTE
+typedef mailbox #(Trans_in)mlbx_aGENte_drv;                  //MAILBOX GENERADOR_AGENTE-DRIVER
 
-typedef mailbox #(Trans_in)mlbx_agte_drv;                  //MAILBOX AGENTE-DRIVER
+//typedef mailbox #(Trans_in)mlbx_agte_drv;                  //MAILBOX AGENTE-DRIVER
 
 typedef mailbox #(Trans_in)mlbx_drv_disp;                  //MAILBOX DRIVER-DISPOSITIVO
 
-typedef mailbox #(Trans_in)mlbx_agte_chckr;                //MAILBOX AGENTE-CHECKER
+typedef mailbox #(Trans_in)mlbx_aGENte_chckr;                //MAILBOX GENERADOR_AGENTE-CHECKER
 
 typedef mailbox #(Trans_out)mlbx_mntr_chckr;               //MAILBOX MONITOR-CHECKER
 

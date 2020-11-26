@@ -15,7 +15,7 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
     mlbx_agte_drv agnt_drv_mbx;
     mlbx_drv_disp drv_disp_mbx [disps];
 
-    Trans_in #(.pckg_sz(pckg_sz)) transaction;
+    Trans_in #(.pckg_sz(pckg_sz)) transaction;   //Se define un item
 
     int espera;   
 	
