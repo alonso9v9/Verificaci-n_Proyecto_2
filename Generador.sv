@@ -10,8 +10,8 @@
 
 //**************************************GENERADOR_AGENTE*******************************************
 class Generador_Agent#(parameter pckg_sz=32, pyld_espec, orgn_espec, dstny_espec, mode_espec, delay_espec);
-   mlbx_aGENte_drv        mlbx_aGENte_drv0;  //buzon que va hacia el driver
-   mlbx_aGENte_chckr      mlbx_aGENte_chckr0; //buzon que va hacia el Checker
+   mlbx_aGENte_drv   mlbx_aGENte_drv0;  //buzon que va hacia el driver
+   mlbx_aGENte_chckr mlbx_aGENte_chckr0; //buzon que va hacia el Checker
 
   tipos_llenado tipo_llnado=llenado_aleat; //handler del tipo de payload
   int iter=10;
