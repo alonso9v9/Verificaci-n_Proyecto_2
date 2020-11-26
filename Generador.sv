@@ -47,7 +47,6 @@ class Generador_Agent#(parameter pckg_sz=32, pyld_espec, orgn_espec, dstny_espec
                     item.payload  =  pyld_espec;
                     item.mode     =  mode_espec;
                     item.delay    =  delay_espec;
-                    item.Nxt_jump =  8'b00000000;
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
                     mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver

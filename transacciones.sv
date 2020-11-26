@@ -34,7 +34,6 @@ endinterface
 
 //*********************************TRANSACCION LADO DRIVER***********************************
 class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
-  rand   bit [pckg_sz-1:pckg_sz-8] Nxt_jump;
   randc  bit [pckg_sz-9:pckg_sz-16] Target; 
   //randc  bit [7:0] Origen; 
   randc int Origen;
@@ -50,14 +49,12 @@ class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
   constraint limittar {Target inside {dir};}
   //constraint limitorin {Origen inside {dir};}
   constraint limitorin {0<=Origen;Origen<=15;}
-  constraint limitnxtjump {Nxt_jump inside {dir};}
   constraint limitdly {0<=delay;delay<=3;}
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s Nxt_jump=%b, Target=%b, Modo=%b, Payload=%0d, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0d, Origen=%b, Delay= %0d",
              $time,
              tag, 
-             this.Nxt_jump,
              this.Target,
              this.mode,
              this.payload,
@@ -70,7 +67,6 @@ endclass
 
 //*********************************TRANSACCION LADO MONITOR**********************************
 class Trans_out#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
-    bit [pckg_sz-1:pckg_sz-8] Nxt_jumpO;
     bit [pckg_sz-9:pckg_sz-16] TargetO; 
     bit [pckg_sz-17:pckg_sz-17] modeO;
     bit [pckg_sz-18:0] payloadO;
@@ -78,10 +74,9 @@ class Trans_out#(parameter pckg_sz=32);//transaccion del mensaje que entra al DU
     tipos_accion tipo;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s Nxt_jump=%b, Target=%b, Modo=%b, Payload=%0d, Delay= %0d, Tipo = %0s",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0d, Delay= %0d, Tipo = %0s",
              $time,
              tag, 
-             this.Nxt_jumpO,
              this.TargetO,
              this.modeO,
              this.payloadO,
