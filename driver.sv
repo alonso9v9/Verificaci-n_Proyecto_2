@@ -8,6 +8,7 @@
 // Luis Alonso Vega-Badilla (alonso9v9@gmail.com)
 // Este script esta estructurado en System Verilog
 
+
 class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 	
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
@@ -30,7 +31,7 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 		foreach (Dispositivos[i]) begin
     		automatic int var_i = i;
     		fork
-    			Dispositivos.id=var_i;
+    			Dispositivos[var_i].id=var_i;
       			Dispositivos[var_i].run();
     		join_none 
   		end
