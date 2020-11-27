@@ -11,7 +11,7 @@
 
 class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
 	
-    virtual Mesh_if #(.width(pckg_sz)) vif;
+    virtual intfz #(.pckg_sz(pckg_sz)) vif;
 
     bit [pckg_sz-1:0] Data;
 
@@ -69,6 +69,7 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
 					$display("[T=%g] [Dispositivo Error] la transacción recibida no tiene tipo valido",$time);
 	   	 			$finish;
 				end
+				
 			endcase // transaction.tipo
 			@(posedge vif.clk);
 		end

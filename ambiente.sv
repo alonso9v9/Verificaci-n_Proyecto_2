@@ -19,37 +19,54 @@
 class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=10);
   
   driver #(.pckg_sz(pckg_sz),.disps(disps),.Fif_Size(fifo_depth)) driver_inst;
-  read_dvc #(.pckg_sz(pckg_sz));
+  disp #(.pckg_sz(pckg_sz),.Fif_Size(fifo_depth)) disp_inst [disps];
+  read_dvc #(.pckg_sz(pckg_sz)) monitor_inst;
   Generador_Agent #(.pckg_sz(pckg_sz)) aGen_inst; 
 
-  
   // Declaración de la interface que conecta el DUT 
-  virtual fifo_if  #(.width(width)) _if;
+  virtual intfz #(.pckg_sz(pckg_sz)) _if;
 
   //declaración de los mailboxes
-  trans_fifo_mbx agnt_drv_mbx;           //mailbox del agente al driver
-  trans_fifo_mbx drv_chkr_mbx;           //mailbox del driver al checher
-  trans_sb_mbx chkr_sb_mbx;              //mailbox del checker al scoreboard
-  comando_test_sb_mbx test_sb_mbx;       //mailbox del test al scoreboard
-  comando_test_agent_mbx test_agent_mbx; //mailbox del test al agente
+  mlbx_aGENte_drv aGENte_drv_mbx;           //mailbox del agente al driver
+  mlbx_drv_disp drv_disp_mbx[disps];        //mailbox del 
+  mlbx_aGENte_chckr aGENte_chckr_mbx;              
+  //mlbx_mntr_chckr mntr_chckr_mbx;       
+
 
   function new();
     // Instanciación de los mailboxes
-    drv_chkr_mbx   = new();
-    agnt_drv_mbx   = new();
-    chkr_sb_mbx    = new();
-    test_sb_mbx    = new();
-    test_agent_mbx = new();
+    aGENte_drv_mbx      = new();
+    aGENte_chckr_mbx    = new();
+
+    foreach(drv_disp_mbx[i]) begin
+      drv_disp_mbx[i] = new();
+    end
+
 
     // instanciación de los componentes del ambiente
-    driver_inst     = new();
-    checker_inst    = new();
-    scoreboard_inst = new();
-    agent_inst      = new();
+    driver_inst         = new();
+    monitor_inst        = new();
+    aGen_inst           = new();
+
+    foreach(disp_inst [i]) begin
+      disp_inst [i]=new();
+    end
+
+
+
     // conexion de las interfaces y mailboxes en el ambiente
-    driver_inst.vif             = _if;
-    driver_inst.drv_chkr_mbx    = drv_chkr_mbx;
-    driver_inst.agnt_drv_mbx    = agnt_drv_mbx;
+    driver_inst.vif  = _if;
+    foreach(disp_inst[i]) begin
+      disp_inst[i].vif = _if;
+    end
+
+    driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
+
+    foreach(driver_inst.drv_disp_mbx[i]) begin
+      driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
+    end
+
+
     checker_inst.drv_chkr_mbx   = drv_chkr_mbx;
     checker_inst.chkr_sb_mbx    = chkr_sb_mbx;
     scoreboard_inst.chkr_sb_mbx = chkr_sb_mbx;
@@ -62,6 +79,15 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
     $display("[%g]  El ambiente fue inicializado",$time);
     fork
       driver_inst.run();
+
+      foreach (Dispositivos[i]) begin
+        automatic int var_i = i;
+        fork
+            Dispositivos[var_i].id=var_i;
+            Dispositivos[var_i].run();
+        join_none 
+      end
+
       checker_inst.run();
       scoreboard_inst.run();
       agent_inst.run();

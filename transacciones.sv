@@ -91,8 +91,6 @@ endclass
 
 typedef mailbox #(Trans_in)mlbx_aGENte_drv;                  //MAILBOX GENERADOR_AGENTE-DRIVER
 
-//typedef mailbox #(Trans_in)mlbx_agte_drv;                  //MAILBOX AGENTE-DRIVER
-
 typedef mailbox #(Trans_in)mlbx_drv_disp;                  //MAILBOX DRIVER-DISPOSITIVO
 
 typedef mailbox #(Trans_in)mlbx_aGENte_chckr;                //MAILBOX GENERADOR_AGENTE-CHECKER

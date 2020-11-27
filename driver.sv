@@ -20,23 +20,10 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 
     int espera;   
 	
-    disp #(.pckg_sz(pckg_sz),.Fif_Size(Fif_Size)) Dispositivos [disps];
-
 
 	task run();
 		$display("[T=%g] [Driver] Inicializado",$time);
 		
-		$display("[T=%g] [Driver] Inizializando todos los dispositivos",$time);
-
-		foreach (Dispositivos[i]) begin
-    		automatic int var_i = i;
-    		fork
-    			Dispositivos[var_i].id=var_i;
-      			Dispositivos[var_i].run();
-    		join_none 
-  		end
-
-  		$display("[T=%g] [Driver] Todos los dispositivos han sido inicializados",$time);
 		//Reset del sistema en el primer ciclo de reloj
 		@(posedge vif.clk);
 		vif.reset=1;
@@ -53,8 +40,27 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 
       		$display("[T=%g] [Driver]Transacciones pendientes en el mbx agnt_drv = %g",$time,aGENte_drv_mbx0.num());
 			
-			drv_disp_mbx[transaction.Origen].put(transaction);
-      		transaction.print("[Driver] Transaccion enviada al dispositivo");
+      		case(transaction.tipo)
+				
+				normal:begin
+					drv_disp_mbx[transaction.Origen].put(transaction);
+	     			transaction.print("[Driver] Transaccion enviada al dispositivo específico");
+				end
+
+				reset:begin
+					vif.reset=1;
+					transaction.tiempo = $time;
+					transaction.print("[Driver] Transaccion ejecutada");
+				end
+
+				default:begin
+					$display("[T=%g] [Driver Error] la transacción recibida no tiene tipo valido",$time);
+	   	 			$finish;
+				end
+				
+			endcase // transaction.tipo
+
+
 
 			@(posedge vif.clk);
 		end
