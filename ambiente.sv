@@ -27,10 +27,10 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
   virtual intfz #(.pckg_sz(pckg_sz)) _if;
 
   //declaración de los mailboxes
-  mlbx_aGENte_drv aGENte_drv_mbx;           //mailbox del agente al driver
-  mlbx_drv_disp drv_disp_mbx[disps];        //mailbox del 
+  mlbx_aGENte_drv     aGENte_drv_mbx;         //mailbox del agente al driver
+  mlbx_drv_disp  drv_disp_mbx[disps];        //mailbox del 
   mlbx_aGENte_chckr aGENte_chckr_mbx;              
-  //mlbx_mntr_chckr mntr_chckr_mbx;       
+  mlbx_top_aGENte     top_aGENte_mbx;
 
 
   function new();
@@ -53,7 +53,6 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
     end
 
 
-
     // conexion de las interfaces y mailboxes en el ambiente
     driver_inst.vif  = _if;
     foreach(disp_inst[i]) begin
@@ -61,25 +60,26 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
     end
 
     driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
+    aGen_inst.mlbx_aGENte_drv0  = aGENte_drv_mbx;
+    //aGen_inst.mlbx_aGENte_chckr0=;
+    aGen_inst.mlbx_top_aGENte0  = ;
 
     foreach(driver_inst.drv_disp_mbx[i]) begin
       driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
     end
+    foreach(drv_disp_mbx[i]) begin
+      drv_disp_mbx[i]=drv_disp_mbx[i];
+    end
 
 
-    checker_inst.drv_chkr_mbx   = drv_chkr_mbx;
-    checker_inst.chkr_sb_mbx    = chkr_sb_mbx;
-    scoreboard_inst.chkr_sb_mbx = chkr_sb_mbx;
-    scoreboard_inst.test_sb_mbx = test_sb_mbx;
-    agent_inst.test_agent_mbx   = test_agent_mbx;
-    agent_inst.agnt_drv_mbx = agnt_drv_mbx;
   endfunction
 
   virtual task run();
     $display("[%g]  El ambiente fue inicializado",$time);
     fork
       driver_inst.run();
-
+      monitor_inst.run();
+      agent_inst.run();
       foreach (Dispositivos[i]) begin
         automatic int var_i = i;
         fork
@@ -88,9 +88,6 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
         join_none 
       end
 
-      checker_inst.run();
-      scoreboard_inst.run();
-      agent_inst.run();
     join_none
   endtask 
 endclass
