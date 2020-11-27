@@ -66,7 +66,7 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
       driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
     end
     foreach(drv_disp_mbx[i]) begin
-      drv_disp_mbx[i]=drv_disp_mbx[i];
+      disp_inst[i].drv_disp_mbx=drv_disp_mbx[i];
     end
 
 
