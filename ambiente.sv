@@ -62,7 +62,7 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
     driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
     aGen_inst.mlbx_aGENte_drv0  = aGENte_drv_mbx;
     //aGen_inst.mlbx_aGENte_chckr0=;
-    aGen_inst.mlbx_top_aGENte0  = ;
+    aGen_inst.mlbx_top_aGENte0  = top_aGENte_mbx;
 
     foreach(driver_inst.drv_disp_mbx[i]) begin
       driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
