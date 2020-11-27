@@ -87,6 +87,30 @@ class Trans_out#(parameter pckg_sz=32);//transaccion del mensaje que entra al DU
   
 endclass
 
+//*********************************TRANSACCION DEL TOP***************************************
+
+class Trans_top#(parameter pckg_sz=32);
+
+    bit  [pckg_sz-9:pckg_sz-16] dstny_espec;
+    int  orgn_espec;
+    bit  [pckg_sz-18:0] pyld_espec;
+    bit  [pckg_sz-17:pckg_sz-17] mode_espec;
+    int  delay_espec;
+
+      function print  (string tag); // Funcion para imprimir datos
+        $display("[T=%g] %s, Destino=%0b, Origen=%d, Payload=%0b, Mode=%0b, Delay= %d",
+             $time,
+             tag, 
+             this.dstny_espec,
+             this.orgn_espec,
+             this.pyld_espec,
+             this.mode_espec,
+             this.delay_espec
+             );
+      endfunction
+
+endclass
+
 //********************************DEFINICION DE MAILBOXES***********************************
 
 typedef mailbox #(Trans_in)mlbx_aGENte_drv;                  //MAILBOX GENERADOR_AGENTE-DRIVER
@@ -96,5 +120,7 @@ typedef mailbox #(Trans_in)mlbx_drv_disp;                  //MAILBOX DRIVER-DISP
 typedef mailbox #(Trans_in)mlbx_aGENte_chckr;                //MAILBOX GENERADOR_AGENTE-CHECKER
 
 typedef mailbox #(Trans_out)mlbx_mntr_chckr;               //MAILBOX MONITOR-CHECKER
+
+typedef mailbox #(Trans_top)mlbx_top_aGENte;               //MAILBOX TOP-GENERADOR_AGENTE
 
 //*******************************************************************************************

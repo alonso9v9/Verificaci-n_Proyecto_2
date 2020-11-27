@@ -9,9 +9,11 @@
 // Este script esta estructurado en System Verilog
 
 //**************************************GENERADOR_AGENTE*******************************************
-class Generador_Agent#(parameter pckg_sz=32, pyld_espec, orgn_espec, dstny_espec, mode_espec, delay_espec);
+class Generador_Agent#(parameter pckg_sz=32);
    mlbx_aGENte_drv   mlbx_aGENte_drv0;  //buzon que va hacia el driver
    mlbx_aGENte_chckr mlbx_aGENte_chckr0; //buzon que va hacia el Checker
+   mlbx_top_aGENte   mlbx_top_aGENte0;   //buzon que se ocupa para tener las transacciones especificas
+   Trans_in #(.pckg_sz(pckg_sz)) item_top;//creamos una nueva transacción de un escenario
 
   tipos_llenado tipo_llnado=llenado_aleat; //handler del tipo de payload
   int iter=10;
@@ -42,11 +44,12 @@ class Generador_Agent#(parameter pckg_sz=32, pyld_espec, orgn_espec, dstny_espec
               Trans_in #(.pckg_sz(pckg_sz)) item = new;//creamos una nueva transacción
                //item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
                 //aquí le caemos encima a lo que especifique el usuario
-                    item.Target   =  dstny_espec;
-                    item.Origen   =  orgn_espec;
-                    item.payload  =  pyld_espec;
-                    item.mode     =  mode_espec;
-                    item.delay    =  delay_espec;
+                    mlbx_top_aGENte.get(item_top) ;
+                        item.Target   =  item_top.dstny_espec;
+                        item.Origen   =  item_top.orgn_espec;
+                        item.payload  =  item_top.pyld_espec;
+                        item.mode     =  item_top.mode_espec;
+                        item.delay    =  item_top.delay_espec;
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
                     mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver
