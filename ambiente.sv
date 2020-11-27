@@ -15,6 +15,11 @@
 // Instanciar,conectar y ejecutar en paralelo cada una 
 // de las unidades individuales del testbench
 
+`include "transacciones.sv"
+`include "driver.sv"
+`include "disp.sv"
+`include "Generador.sv"
+`include "monitor.sv"
 
 class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=10);
   
@@ -83,8 +88,8 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
       foreach (Dispositivos[i]) begin
         automatic int var_i = i;
         fork
-            Dispositivos[var_i].id=var_i;
-            Dispositivos[var_i].run();
+            disp_inst[var_i].id=var_i;
+            disp_inst[var_i].run();
         join_none 
       end
 
