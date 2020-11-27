@@ -22,26 +22,27 @@ typedef enum{normal,reset} tipos_accion;
 
 
 //**************************************INTERFACE*******************************************
-interface intfz#(parameter pckg_sz)(input bit clk);
-      bit pndng[16];                                                //output
-      bit [pckg_sz-1:0] data_out[16];                               //output
-      bit popin[16];                                                //output
-      bit pop[16];                                                  //input
-      bit [pckg_sz-1:0]data_out_i_in[16];                           //input
-      bit pndng_i_in[16];                                           //input
-      bit reset;													                          //input
+interface intfz#(parameter pckg_sz)(input clk);
+      logic pndng[16];                                                //output
+      logic [pckg_sz-1:0] data_out[16];                               //output
+      logic popin[16];                                                //output
+      logic pop[16];                                                  //input
+      logic [pckg_sz-1:0]data_out_i_in[16];                           //input
+      logic pndng_i_in[16];                                           //input
+      logic reset;													                          //input
 endinterface
 
 //*********************************TRANSACCION LADO DRIVER***********************************
 class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
-  randc  bit [pckg_sz-9:pckg_sz-16] Target; 
+  rand  bit [pckg_sz-9:pckg_sz-16] Target; 
   //randc  bit [7:0] Origen; 
-  randc int Origen;
+  rand int Origen;
   
   rand   bit [pckg_sz-17:pckg_sz-17] mode;
   rand   bit [pckg_sz-18:0] payload;
   rand   int delay;
   tipos_accion tipo;
+  int tiempo;
 
   // Valores válidos de direcciones de los dispositivos
   bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};

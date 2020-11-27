@@ -10,6 +10,8 @@
 // Definición de la clase del monitor
 
 // Esta clase monitorea cada dispositivo individualmente
+
+
 class read_dvc #(parameter pckg_sz=32);
 	mlbx_mntr_chckr to_chckr_mlbx;
 	Trans_out #(.pckg_sz(pckg_sz)) to_chckr;
@@ -17,15 +19,14 @@ class read_dvc #(parameter pckg_sz=32);
 	int tag = 0;
 
 	task run();
-		$display("[%t] Monitor %d inicializado", $time, tag);
+		$display("[T=%g] Monitor %g inicializado", $time, tag);
 		@(posedge vif.clk);
 		forever begin
-			if (vif.pndng) begin
-				to_chckr.Nxt_jumpO 	= vif.data_out[tag][pckg_sz-1:pckg_sz-8];
+			if (vif.pndng[tag]) begin  
 				to_chckr.TargetO 	= vif.data_out[tag][pckg_sz-9:pckg_sz-16];
 				to_chckr.modeO 		= vif.data_out[tag][pckg_sz-17];
 				to_chckr.payloadO 	= vif.data_out[tag][pckg_sz-18:0];
-				vif.pop = 1;
+				vif.pop[tag] = 1;
 				if (vif.reset) begin
 					to_chckr.tipo = reset;
 				end else

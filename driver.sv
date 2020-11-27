@@ -16,7 +16,7 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
     mlbx_aGENte_drv aGENte_drv_mbx0;
     mlbx_drv_disp drv_disp_mbx [disps];
 
-    Trans_in #(.pckg_sz(pckg_sz)) transaction;   //Se define un item
+      //Se define un item
 
     int espera;   
 	
@@ -30,7 +30,7 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 
 		@(posedge vif.clk);
 		forever begin
-			
+			Trans_in #(.pckg_sz(pckg_sz)) transaction; 
 			vif.reset=0;
 
       		$display("[T=%g] [Driver] Esperando por una transacción",$time);				

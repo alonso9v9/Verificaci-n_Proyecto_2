@@ -15,11 +15,6 @@
 // Instanciar,conectar y ejecutar en paralelo cada una 
 // de las unidades individuales del testbench
 
-`include "transacciones.sv"
-`include "driver.sv"
-`include "disp.sv"
-`include "Generador.sv"
-`include "monitor.sv"
 
 class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=10);
   
@@ -59,12 +54,10 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
 
 
     // conexion de las interfaces y mailboxes en el ambiente
-    driver_inst.vif  = _if;
-    foreach(disp_inst[i]) begin
-      disp_inst[i].vif = _if;
-    end
+
 
     driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
+
     aGen_inst.mlbx_aGENte_drv0  = aGENte_drv_mbx;
     //aGen_inst.mlbx_aGENte_chckr0=;
     aGen_inst.mlbx_top_aGENte0  = top_aGENte_mbx;
@@ -80,12 +73,20 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
   endfunction
 
   virtual task run();
+
+
+    driver_inst.vif  = _if;
+    foreach(disp_inst[i]) begin
+      disp_inst[i].vif = _if;
+    end
+
+    monitor_inst.vif =_if;
     $display("[%g]  El ambiente fue inicializado",$time);
     fork
       driver_inst.run();
       monitor_inst.run();
-      agent_inst.run();
-      foreach (Dispositivos[i]) begin
+      aGen_inst.run();
+      foreach (disp_inst[i]) begin
         automatic int var_i = i;
         fork
             disp_inst[var_i].id=var_i;
