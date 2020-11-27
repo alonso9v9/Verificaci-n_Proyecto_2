@@ -44,7 +44,7 @@ class Generador_Agent#(parameter pckg_sz=32);
               Trans_in #(.pckg_sz(pckg_sz)) item = new;//creamos una nueva transacción
                //item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
                 //aquí le caemos encima a lo que especifique el usuario
-                    mlbx_top_aGENte.get(item_top) ;
+                    mlbx_top_aGENte0.get(item_top) ;
                         item.Target   =  item_top.dstny_espec;
                         item.Origen   =  item_top.orgn_espec;
                         item.payload  =  item_top.pyld_espec;
