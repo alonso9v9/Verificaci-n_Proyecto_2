@@ -1,4 +1,4 @@
-
+    
 // Curso: EL-5811 Verificación Funcional de Circuitos integrados
 // Tecnologico de Costa Rica (www.tec.ac.cr)
 // Profesor: Ronny García Ramírez 
@@ -20,7 +20,7 @@ class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=
   
   driver #(.pckg_sz(pckg_sz),.disps(disps),.Fif_Size(fifo_depth)) driver_inst;
   disp #(.pckg_sz(pckg_sz),.Fif_Size(fifo_depth)) disp_inst [disps];
-  read_dvc #(.pckg_sz(pckg_sz)) monitor_inst;
+  monitor #(.pckg_sz(pckg_sz)) monitor_inst;
   Generador_Agent #(.pckg_sz(pckg_sz)) aGen_inst; 
 
   // Declaración de la interface que conecta el DUT 

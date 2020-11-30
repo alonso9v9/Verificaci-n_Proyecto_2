@@ -46,18 +46,20 @@ endclass
 // Falta el fork!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class monitor #(parameter pckg_sz=32);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
-	mlbx_mntr_chckr to_chckr_mlbx_p [15:0]; // Mailboxes para cada dispositivo
-	read_dvc #(.pckg_sz(pckg_sz)) dvcs [15:0];
+	mlbx_mntr_chckr to_chckr_mlbx_p [16]; // Mailboxes para cada dispositivo
+	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
 
 	task run();
 		$display("[T=%g] El monitor fue inicializado.", $time);
-		for (int i = 0; i < 16; i++) begin
+		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
+				dvcs[auto_i] = new();
 				dvcs[auto_i].tag = auto_i;
-				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p;
+				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
 				dvcs[auto_i].vif = vif;
 				dvcs[auto_i].run();
+				$display("[Monitor] run %g",auto_i);
 			join_none
 		end		
 	endtask
