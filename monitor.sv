@@ -19,8 +19,9 @@ class read_dvc #(parameter pckg_sz=32);
 	int tag = 0;
 
 	task run();
-		$display("[T=%g] Monitor %g inicializado", $time, tag);
+		$display("[T=%g] [Monitor] Dispositivo %g inicializado.", $time, tag);
 		@(posedge vif.clk);
+		$display("[Monitor] Clock recibido por el dispositivo %g.", tag);
 		forever begin
 			if (vif.pndng[tag]) begin  
 				to_chckr.TargetO 	= vif.data_out[tag][pckg_sz-9:pckg_sz-16];
@@ -34,7 +35,7 @@ class read_dvc #(parameter pckg_sz=32);
 					to_chckr.tipo = normal;
 				end
 				to_chckr_mlbx.put(to_chckr);
-				to_chckr.print("[Monitor] Tansacción leída");
+				to_chckr.print("[Monitor] Tansacción leída.");
 			end
 			@(posedge vif.clk);
 		end
@@ -49,6 +50,7 @@ class monitor #(parameter pckg_sz=32);
 	read_dvc #(.pckg_sz(pckg_sz)) dvcs [15:0];
 
 	task run();
+		$display("[T=%g] El monitor fue inicializado.", $time);
 		for (int i = 0; i < 16; i++) begin
 			automatic int auto_i = i;
 			fork
