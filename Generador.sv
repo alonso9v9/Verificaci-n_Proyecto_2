@@ -31,7 +31,7 @@ class Generador_Agent#(parameter pckg_sz=32);
                     //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
 
                     mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver
-                    item.print("[T=%0t] [Generator] Transaccion enviada al driver");
+                    item.print("[Generator] Transaccion enviada al driver");
 
             end
                 $display ("[T=%0t] [Generator] Done generation of %0d items", $time, iter);
