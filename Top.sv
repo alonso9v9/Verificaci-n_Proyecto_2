@@ -22,7 +22,7 @@ task run();
         esc1_pru3:
          begin
          end
-        esc1_pru4:
+        esc1_pru4: 
          begin
          end
         esc2_pru1:

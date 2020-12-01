@@ -48,9 +48,29 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
   // Restringir las direcciones al aleatorizar
   constraint limittar {Target inside {dir};}
-  //constraint limitorin {Origen inside {dir};}
   constraint limitorin {0<=Origen;Origen<=15;}
   constraint limitdly {0<=delay;delay<=3;}
+   
+//Esto para que el origen no sea igual al destino
+
+  constraint orin_dist_dtny {
+  if(Target == 8'b00000001 && Origen = 0  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00000010 && Origen = 1  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00000011 && Origen = 2  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00000100 && Origen = 3  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00010000 && Origen = 4  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00100000 && Origen = 5  )Origen =$urandom_range(0,15);
+  if(Target == 8'b00110000 && Origen = 6  )Origen =$urandom_range(0,15);
+  if(Target == 8'b01000000 && Origen = 7  )Origen =$urandom_range(0,15);
+  if(Target == 8'b01010001 && Origen = 8  )Origen =$urandom_range(0,15);
+  if(Target == 8'b01010010 && Origen = 9  )Origen =$urandom_range(0,15);
+  if(Target == 8'b01010011 && Origen = 10 )Origen =$urandom_range(0,15);
+  if(Target == 8'b01010100 && Origen = 11 )Origen =$urandom_range(0,15);
+  if(Target == 8'b00010101 && Origen = 12 )Origen =$urandom_range(0,15);
+  if(Target == 8'b00100101 && Origen = 13 )Origen =$urandom_range(0,15);
+  if(Target == 8'b00110101 && Origen = 14 )Origen =$urandom_range(0,15);
+  if(Target == 8'b01000101 && Origen = 15 )Origen =$urandom_range(0,15);}
+  
   
   function print  (string tag); // Funcion para imprimir datos
     $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0b, Origen=%b, Delay= %0d",
