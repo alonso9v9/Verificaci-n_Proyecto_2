@@ -219,9 +219,15 @@ wire pndng_ab [ROWS][COLUMS-1];
 wire [pckg_sz-1:0] data_ab [ROWS][COLUMS-1];
 wire pop_ab [ROWS][COLUMS-1];
 
-genvar i;
+genvar R;
+genvar C;
+
 generate
-	// Routers
+	for (R = 0; R < 4; R++) begin
+		for (C = 0; C < 4; C++) begin
+			
+		end
+	end
 endgenerate
 
 endmodule
