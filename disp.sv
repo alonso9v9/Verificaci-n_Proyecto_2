@@ -35,7 +35,7 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
 			vif.reset=0;
 			espera = 0;
 
-      		@(posedge vif.clk);
+      		//@(posedge vif.clk);
       		$display("[T=%g] [Dispositivo=%g] Esperando transacción.",$time,id);				
       		drv_disp_mbx.get(transaction);
       		transaction.print("[Dispositivo] Recibió la transacción.");

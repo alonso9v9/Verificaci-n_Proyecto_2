@@ -41,10 +41,12 @@ module test_bench;
 
   ambiente #(.pckg_sz(pckg_sz),.disps(16),.fifo_depth(fifo_depth)) inst_amb;
 
-  
 
   initial begin
   	clk = 0;
+    _if.reset = 1;
+    #10
+    _if.reset = 0;
     inst_amb=new(); 
     inst_amb._if=_if;
     fork
