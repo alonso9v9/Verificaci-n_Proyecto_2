@@ -33,7 +33,7 @@ interface intfz#(parameter pckg_sz)(input clk);
 endinterface
 
 //*********************************TRANSACCION LADO DRIVER***********************************
-class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
+class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   rand  bit [pckg_sz-9:pckg_sz-16] Target; 
   //randc  bit [7:0] Origen; 
   rand int Origen;
@@ -67,7 +67,7 @@ class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
 endclass
 
 //*********************************TRANSACCION LADO MONITOR**********************************
-class Trans_out#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
+class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
     bit [pckg_sz-9:pckg_sz-16] TargetO; 
     bit [pckg_sz-17:pckg_sz-17] modeO;
     bit [pckg_sz-18:0] payloadO;
@@ -90,7 +90,7 @@ endclass
 
 //*********************************TRANSACCION DEL TOP***************************************
 
-class Trans_top#(parameter pckg_sz=32);
+class Trans_top#(parameter pckg_sz=40);
 
     bit  [pckg_sz-9:pckg_sz-16] dstny_espec;
     int  orgn_espec;

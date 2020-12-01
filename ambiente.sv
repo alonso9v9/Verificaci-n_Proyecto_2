@@ -16,7 +16,7 @@
 // de las unidades individuales del testbench
 
 
-class ambiente #(parameter pckg_sz =16,parameter disps =16,parameter fifo_depth=10);
+class ambiente #(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
   
   driver #(.pckg_sz(pckg_sz),.disps(disps),.Fif_Size(fifo_depth)) driver_inst;
   disp #(.pckg_sz(pckg_sz),.Fif_Size(fifo_depth)) disp_inst [disps];
