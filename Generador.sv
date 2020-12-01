@@ -15,7 +15,7 @@ class Generador_Agent#(parameter pckg_sz=32);
    mlbx_top_aGENte   mlbx_top_aGENte0;   //buzon que se ocupa para tener las transacciones especificas
    Trans_top #(.pckg_sz(pckg_sz)) item_top;//creamos una nueva transacción de un escenario
    rand int iter;
-   constraint {3<=iter;iter<=300}
+  constraint cons_iter{3<=iter;iter<=300;}
   tipos_llenado tipo_llnado=llenado_aleat; //handler del tipo de payload
    
 
