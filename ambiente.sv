@@ -32,11 +32,11 @@ class ambiente #(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=
   mlbx_aGENte_chckr aGENte_chckr_mbx;              
   mlbx_top_aGENte     top_aGENte_mbx;
 
-
   function new();
     // Instanciación de los mailboxes
     aGENte_drv_mbx      = new();
     aGENte_chckr_mbx    = new();
+    top_aGENte_mbx      = new();
 
     foreach(drv_disp_mbx[i]) begin
       drv_disp_mbx[i] = new();
@@ -54,7 +54,6 @@ class ambiente #(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=
 
 
     // conexion de las interfaces y mailboxes en el ambiente
-
 
     driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
 
