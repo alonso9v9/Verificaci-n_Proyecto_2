@@ -19,8 +19,9 @@ class read_dvc #(parameter pckg_sz=32);
 	int tag = 0;
 
 	task run();
-		$display("[T=%g] Monitor %g inicializado", $time, tag);
+		$display("[T=%g] [Monitor] Dispositivo %g inicializado.", $time, tag);
 		@(posedge vif.clk);
+		$display("[Monitor] Clock recibido por el dispositivo %g.", tag);
 		forever begin
 			vif.pop[tag] <= 0;
 			if (vif.pndng[tag]) begin  
@@ -35,7 +36,7 @@ class read_dvc #(parameter pckg_sz=32);
 					to_chckr.tipo = normal;
 				end
 				to_chckr_mlbx.put(to_chckr);
-				to_chckr.print("[Monitor] Tansacción leída");
+				to_chckr.print("[Monitor] Tansacción leída.");
 			end
 			@(posedge vif.clk);
 		end
@@ -45,17 +46,20 @@ endclass
 
 class monitor #(parameter pckg_sz=32);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
-	mlbx_mntr_chckr to_chckr_mlbx_p [15:0]; // Mailboxes para cada dispositivo
-	read_dvc #(.pckg_sz(pckg_sz)) dvcs [15:0];
+	mlbx_mntr_chckr to_chckr_mlbx_p [16]; // Mailboxes para cada dispositivo
+	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
 
 	task run();
-		for (int i = 0; i < 16; i++) begin
+		$display("[T=%g] El monitor fue inicializado.", $time);
+		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
+				dvcs[auto_i] = new();
 				dvcs[auto_i].tag = auto_i;
-				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p;
+				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
 				dvcs[auto_i].vif = vif;
 				dvcs[auto_i].run();
+				$display("[Monitor] run %g",auto_i);
 			join_none
 		end		
 	endtask

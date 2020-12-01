@@ -17,17 +17,17 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
 
     mlbx_drv_disp drv_disp_mbx;
 
-    bit Fifo_in[$:Fif_Size-1];
+    bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
     int espera;
 
     int id;
 
-
+    string s;
 
 
 	task run();
 		
-		$display("[%g] [Dispositivo=%g] inicializado",$time,id);
+		$display("[T=%g] [Dispositivo=%g] inicializado.",$time,id);
 
 		@(posedge vif.clk);
 		forever begin
@@ -35,10 +35,12 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
 			vif.reset=0;
 			espera = 0;
 
-      		@(posedge vif.clk);
-      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion",$time,id);				
+      		//@(posedge vif.clk);
+      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion.",$time,id);				
       		drv_disp_mbx.get(transaction);
-      		transaction.print("[Dispositivo] Recibio la transaccion");
+      		$display("[T=%g] [Dispositivo=%g] Recibio la transaccion:",$time,id);
+      		s.itoa(id);
+      		transaction.print({"[Dispositivo=",s,"]"});
 
       		$display("[T=%g] [Dispositivo] Transacciones pendientes en el mbx drv_disp %g = %g",$time,id,drv_disp_mbx.num());
 
@@ -57,17 +59,17 @@ class disp #(parameter pckg_sz=16,parameter Fif_Size=10);
       				Fifo_in.push_front(Data); 	
 					vif.pndng_i_in[transaction.Origen]=1;
 					transaction.tiempo = $time;
-	     			transaction.print("[Dispositivo] Transaccion ejecutada");
+	     			transaction.print("[Dispositivo] Transaccion ejecutada.");
 				end
 
 				reset:begin
 					vif.reset=1;
 					transaction.tiempo = $time;
-					transaction.print("[Dispositivo] Transaccion ejecutada");
+					transaction.print("[Dispositivo] Transaccion ejecutada.");
 				end
 
 				default:begin
-					$display("[T=%g] [Dispositivo Error] la transacción recibida no tiene tipo valido",$time);
+					$display("[T=%g] [Dispositivo Error] la transaccion recibida no tiene tipo valido.",$time);
 	   	 			$finish;
 				end
 

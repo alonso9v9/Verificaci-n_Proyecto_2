@@ -33,28 +33,30 @@ class driver #(parameter pckg_sz=16,parameter disps=16,parameter Fif_Size=10);
 			Trans_in #(.pckg_sz(pckg_sz)) transaction; 
 			vif.reset=0;
 
-      		$display("[T=%g] [Driver] Esperando por una transacción",$time);				
+      		$display("[T=%g] [Driver] Esperando por una transaccion",$time);				
       		@(posedge vif.clk);
       		aGENte_drv_mbx0.get(transaction);
       		transaction.print("[Driver] Transaccion recibida del agente");
 
-      		$display("[T=%g] [Driver]Transacciones pendientes en el mbx agnt_drv = %g",$time,aGENte_drv_mbx0.num());
+      		$display("[T=%g] [Driver] Transacciones pendientes en el mbx agnt_drv = %g",$time,aGENte_drv_mbx0.num());
 			
       		case(transaction.tipo)
 				
 				normal:begin
+					string s;
+					s.itoa(transaction.Origen);
 					drv_disp_mbx[transaction.Origen].put(transaction);
-	     			transaction.print("[Driver] Transaccion enviada al dispositivo específico");
+	     			transaction.print({"[Driver] Transaccion enviada al dispositivo ",s});
 				end
 
 				reset:begin
 					vif.reset=1;
 					transaction.tiempo = $time;
-					transaction.print("[Driver] Transaccion ejecutada");
+					transaction.print("[Driver] [Reset] Transaccion ejecutada");
 				end
 
 				default:begin
-					$display("[T=%g] [Driver Error] la transacción recibida no tiene tipo valido",$time);
+					$display("[T=%g] [Driver Error] la transaccion recibida no tiene tipo valido",$time);
 	   	 			$finish;
 				end
 				
