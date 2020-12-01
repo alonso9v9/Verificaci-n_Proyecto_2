@@ -53,7 +53,7 @@ class Trans_in#(parameter pckg_sz=32);//transaccion del mensaje que entra al DUT
   constraint limitdly {0<=delay;delay<=3;}
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0d, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0b, Origen=%b, Delay= %0d",
              $time,
              tag, 
              this.Target,
