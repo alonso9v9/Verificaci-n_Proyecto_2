@@ -197,4 +197,31 @@ module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40
   	input pndng_i_in[ROWS*2+COLUMS*2],
 );
 
+//// Conexiones entre routers
+
+/// Conexiones horizontales
+// Datos hacia la derecha
+wire pndng_der [ROWS][COLUMS-1];
+wire [pckg_sz-1:0] data_der [ROWS][COLUMS-1];
+wire popin_der [ROWS][COLUMS-1];
+// Datos hacia la izquierda
+wire pndng_iz [ROWS][COLUMS-1];
+wire [pckg_sz-1:0] data_iz [ROWS][COLUMS-1];
+wire pop_iz [ROWS][COLUMS-1];
+
+/// Conexiones verticales
+// Datos hacia arriba
+wire pndng_ar [ROWS][COLUMS-1];
+wire [pckg_sz-1:0] data_ar [ROWS][COLUMS-1];
+wire popin_ar [ROWS][COLUMS-1];
+// Datos hacia la izquierda
+wire pndng_ab [ROWS][COLUMS-1];
+wire [pckg_sz-1:0] data_ab [ROWS][COLUMS-1];
+wire pop_ab [ROWS][COLUMS-1];
+
+genvar i;
+generate
+	// Routers
+endgenerate
+
 endmodule
