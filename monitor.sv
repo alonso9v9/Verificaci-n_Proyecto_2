@@ -22,11 +22,12 @@ class read_dvc #(parameter pckg_sz=32);
 		$display("[T=%g] Monitor %g inicializado", $time, tag);
 		@(posedge vif.clk);
 		forever begin
+			vif.pop[tag] <= 0;
 			if (vif.pndng[tag]) begin  
 				to_chckr.TargetO 	= vif.data_out[tag][pckg_sz-9:pckg_sz-16];
 				to_chckr.modeO 		= vif.data_out[tag][pckg_sz-17];
 				to_chckr.payloadO 	= vif.data_out[tag][pckg_sz-18:0];
-				vif.pop[tag] = 1;
+				vif.pop[tag] <= 1;
 				if (vif.reset) begin
 					to_chckr.tipo = reset;
 				end else
@@ -42,7 +43,6 @@ class read_dvc #(parameter pckg_sz=32);
 
 endclass
 
-// Falta el fork!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 class monitor #(parameter pckg_sz=32);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
 	mlbx_mntr_chckr to_chckr_mlbx_p [15:0]; // Mailboxes para cada dispositivo
