@@ -201,31 +201,44 @@ module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40
 
 /// Conexiones horizontales
 // Datos hacia la derecha
-wire pndng_der [ROWS][COLUMS-1];
-wire [pckg_sz-1:0] data_der [ROWS][COLUMS-1];
-wire popin_der [ROWS][COLUMS-1];
+wire pndng_der [COLUMS+1];
+wire [pckg_sz-1:0] data_der [COLUMS+1];
+wire popin_der [COLUMS+1];
 // Datos hacia la izquierda
-wire pndng_iz [ROWS][COLUMS-1];
-wire [pckg_sz-1:0] data_iz [ROWS][COLUMS-1];
-wire pop_iz [ROWS][COLUMS-1];
+wire pndng_iz [COLUMS+1];
+wire [pckg_sz-1:0] data_iz [COLUMS+1];
+wire pop_iz [COLUMS+1];
 
 /// Conexiones verticales
 // Datos hacia arriba
-wire pndng_ar [ROWS][COLUMS-1];
-wire [pckg_sz-1:0] data_ar [ROWS][COLUMS-1];
-wire popin_ar [ROWS][COLUMS-1];
+wire pndng_ar [ROWS+1];
+wire [pckg_sz-1:0] data_ar [ROWS+1];
+wire popin_ar [ROWS+1];
 // Datos hacia la izquierda
-wire pndng_ab [ROWS][COLUMS-1];
-wire [pckg_sz-1:0] data_ab [ROWS][COLUMS-1];
-wire pop_ab [ROWS][COLUMS-1];
+wire pndng_ab [ROWS+1];
+wire [pckg_sz-1:0] data_ab [ROWS+1];
+wire pop_ab [ROWS+1];
+
+// Assign salidas a cables correspondientes
 
 genvar R;
 genvar C;
 
 generate
-	for (R = 0; R < 4; R++) begin
-		for (C = 0; C < 4; C++) begin
-			
+	for (R = 1; R < 5; R++) begin
+		for (C = 1; C < 5; C++) begin
+			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) (
+				.clk(clk),
+				.rst(rst),
+				
+				.Data_out_i_in({data_ab[R-1], data_iz[C], data_ar[R], data_der[C-1]}),
+				.pndng_i_in({pndng_ab[R-1], pndng_iz[C], pndng_ar[R], pndng_der[C-1]}),
+				.pop({pop_ab[R-1], pop_iz[C], pop_ar[R], pop_der[C-1]}),
+
+				.Popin({pop_ar[R-1], pop_der[C], pop_ab[R], pop_iz[C-1]}),
+				.Data_out({data_ar[R-1], data_der[C], data_ab[R], data_iz[C-1]}),
+				.pndng({pndng_ar[R-1], pndng_der[C], pndng_ab[R], pndng_iz[C-1]}),
+				);
 		end
 	end
 endgenerate
