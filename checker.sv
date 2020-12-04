@@ -291,9 +291,8 @@ end
 // Interconexiones de los routers
 generate
 	for (R = 1; R < 5; R++) begin
-		for (C = 1; C < 5; C++) begin
-			
-			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) (
+		for (C = 1; C < 5; C++) begin : _n_
+			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) rtr_ (
 				.clk(clk),
 				.rst(rst),
 				
