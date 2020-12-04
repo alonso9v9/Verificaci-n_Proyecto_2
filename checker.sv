@@ -201,29 +201,94 @@ module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40
 
 /// Conexiones horizontales
 // Datos hacia la derecha
-wire pndng_der [COLUMS+1];
-wire [pckg_sz-1:0] data_der [COLUMS+1];
-wire popin_der [COLUMS+1];
+wire pndng_der [ROWS:1][COLUMS:0];
+wire [pckg_sz-1:0] data_der [ROWS:1][COLUMS:0];
+wire popin_der [ROWS:1][COLUMS:0];
 // Datos hacia la izquierda
-wire pndng_iz [COLUMS+1];
-wire [pckg_sz-1:0] data_iz [COLUMS+1];
-wire pop_iz [COLUMS+1];
+wire pndng_iz [ROWS:1][COLUMS:0];
+wire [pckg_sz-1:0] data_iz [ROWS:1][COLUMS:0];
+wire pop_iz [ROWS:1][COLUMS:0];
 
 /// Conexiones verticales
 // Datos hacia arriba
-wire pndng_ar [ROWS+1];
-wire [pckg_sz-1:0] data_ar [ROWS+1];
-wire popin_ar [ROWS+1];
-// Datos hacia la izquierda
-wire pndng_ab [ROWS+1];
-wire [pckg_sz-1:0] data_ab [ROWS+1];
-wire pop_ab [ROWS+1];
-
-// Assign salidas a cables correspondientes
+wire pndng_ar [ROWS:0][COLUMS:1];
+wire [pckg_sz-1:0] data_ar [ROWS:0][COLUMS:1];
+wire popin_ar [ROWS:0][COLUMS:1];
+// Datos hacia abajo
+wire pndng_ab [ROWS:0][COLUMS:1];
+wire [pckg_sz-1:0] data_ab [ROWS:0][COLUMS:1];
+wire pop_ab [ROWS:0][COLUMS:1];
 
 genvar R;
 genvar C;
+int i;
+int ii;
 
+// I/O dispositivos 0 a 3
+for (i = 0; i < 4; i++) begin
+
+	ii = i + 1; // Para acomodar al índice de las columnas (inicia en columna 1 = i+1 = 0+1)
+
+	// I
+	assign pop_ab[0][ii] = pop[i];
+	assign data_ab[0][ii] = data_out_i_in[i];
+	assign pndng_ab[0][ii] = pndng_i_in[i];
+
+	// O
+	assign popin[ii] = pop_ar[0][i];
+	assign data_out[ii] = data_ar[0][i];
+	assign pndng[ii] = pndng_ar[0][i];
+end
+
+// I/O dispositivos 4 a 7
+for (i = 4; i < 8; i++) begin
+
+	ii = i - 3; // Para acomodar el índice de las filas (inicia en fila 1 = i-3 = 4-3)
+
+	// I
+	assign pop_der[ii][0] = pop[i];
+	assign data_der[ii][0] = data_out_i_in[i];
+	assign pndng_der[ii][0] = pndng_i_in[i];
+
+	// O
+	assign popin[i] = pop_iz[ii][0];
+	assign data_out[i] = data_iz[ii][0];
+	assign pndng[i] = pndng_iz[ii][0];
+end
+
+// I/O dispositivos 8 a 11
+for (i = 8; i < 12; i++) begin
+
+	ii = i - 7; // Para acomodar el índice de las columnas (inicia en columna 1 = i-7 = 8-7)
+
+	// I
+	assign pop_ar[4][ii] = pop[i];
+	assign data_ar[4][ii] = data_out_i_in[i];
+	assign pndng_ar[4][ii] = pndng_i_in[i];
+
+	// O
+	assign popin[i] = pop_ab[4][ii];
+	assign data_out[i] = data_ab[4][ii];
+	assign pndng[i] = pndng_ab[4][ii];
+end
+
+// I/O dispositivos 12 a 15
+for (int i = 12; i < 16; i++) begin
+
+	ii = i - 11; // Para acomodar el índice de las filas (inicia en fila 1 = i-11 = 12-11)
+
+	// I
+	assign pop_iz[ii][4] = pop[i];
+	assign data_iz[ii][4] = data_out_i_in[i];
+	assign pndng_iz[ii][4] = pndng_i_in[i];
+
+	// O
+	assign popin[i] = pop_der[ii][4];
+	assign data_out[i] = data_der[ii][4];
+	assign pndng[i] = pndng_der[ii][4];
+end
+
+// Interconexiones de los routers
 generate
 	for (R = 1; R < 5; R++) begin
 		for (C = 1; C < 5; C++) begin
@@ -231,16 +296,17 @@ generate
 				.clk(clk),
 				.rst(rst),
 				
-				.Data_out_i_in({data_ab[R-1], data_iz[C], data_ar[R], data_der[C-1]}),
-				.pndng_i_in({pndng_ab[R-1], pndng_iz[C], pndng_ar[R], pndng_der[C-1]}),
-				.pop({pop_ab[R-1], pop_iz[C], pop_ar[R], pop_der[C-1]}),
+				.Data_out_i_in({data_ab[R-1][C], data_iz[R][C], data_ar[R][C], data_der[R][C-1]}),
+				.pndng_i_in({pndng_ab[R-1][C], pndng_iz[R][C], pndng_ar[R][C], pndng_der[R][C-1]}),
+				.pop({pop_ab[R-1][C], pop_iz[R][C], pop_ar[R][C], pop_der[R][C-1]}),
 
-				.Popin({pop_ar[R-1], pop_der[C], pop_ab[R], pop_iz[C-1]}),
-				.Data_out({data_ar[R-1], data_der[C], data_ab[R], data_iz[C-1]}),
-				.pndng({pndng_ar[R-1], pndng_der[C], pndng_ab[R], pndng_iz[C-1]}),
+				.Popin({pop_ar[R-1][C], pop_der[R][C], pop_ab[R][C], pop_iz[R][C-1]}),
+				.Data_out({data_ar[R-1][C], data_der[R][C], data_ab[R][C], data_iz[R][C-1]}),
+				.pndng({pndng_ar[R-1][C], pndng_der[R][C], pndng_ab[R][C], pndng_iz[R][C-1]}),
 				);
 		end
 	end
 endgenerate
 
 endmodule
+
