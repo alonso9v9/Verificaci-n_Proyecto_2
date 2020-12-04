@@ -16,11 +16,12 @@ class Generador_Agent#(parameter pckg_sz=32);
    Trans_top #(.pckg_sz(pckg_sz)) item_top;//creamos una nueva transacción de un escenario
    rand int iter;
   constraint cons_iter{3<=iter;iter<=300;}
-  tipos_llenado tipo_llnado=llenado_aleat; //handler del tipo de payload
+  tipos_llenado tipo_llenado; //handler del tipo llenado de la transaccion
    
 
   task run();//task donde corre el generador
-    case(tipo_llnado) //case para decidir si llenar la transaccion con datos aleatorios o con datos especificador por el usuario
+    $display("[T=%0t] [Geneeeeee] iter = %p", $time,iter);
+    case(tipo_llenado) //case para decidir si llenar la transaccion con datos aleatorios o con datos especificador por el usuario
         llenado_aleat: //genera una transaccion aleatoria
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado aleatorio", $time);

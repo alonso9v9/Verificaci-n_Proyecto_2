@@ -50,7 +50,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   constraint limittar {Target inside {dir};}
   constraint limitorin {0<=Origen;Origen<=15;}
   constraint limitorin_alter {0<=Origen_alternativo;Origen_alternativo<=15;}
-  constraint limitdly {0<=delay;delay<=3;}
+  constraint limitdly {0<=delay;delay<=10;}
    
 //Esto para que el origen no sea igual al destino
 
@@ -69,12 +69,12 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
     if(Target == 8'b01010100 && Origen == 11 )Origen <=Origen_alternativo;
     if(Target == 8'b00010101 && Origen == 12 )Origen <=Origen_alternativo;
     if(Target == 8'b00100101 && Origen == 13 )Origen <=Origen_alternativo;
-    if(Target == 8'b00110101 && Origen ==14 )Origen <=Origen_alternativo;
+    if(Target == 8'b00110101 && Origen == 14 )Origen <=Origen_alternativo;
     if(Target == 8'b01000101 && Origen == 15 )Origen <=Origen_alternativo;}
   
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0b, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%d, Origen=%b, Delay= %0d",
              $time,
              tag, 
              this.Target,
@@ -84,6 +84,9 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
              this.delay
              );
   endfunction
+  
+  
+
   
 endclass
 
@@ -96,7 +99,7 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
     tipos_accion tipo;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0d, Delay= %0d, Tipo = %0s",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%d, Delay= %0d, Tipo = %0s",
              $time,
              tag, 
              this.TargetO,

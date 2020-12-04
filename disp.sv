@@ -23,9 +23,18 @@ class disp #(parameter pckg_sz=64,parameter Fif_Size=10);
     int id=0;
 
     string s;
+	
+	bit on_off_fifodepth;
 
 
 	task run();
+
+   if(on_off_fifodepth)begin
+          bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
+      end else begin
+          bit [pckg_sz-1:0] Fifo_in[$]; end
+
+
 		$display("[T=%g] [Dispositivo=%g] inicializado.",$time,id);
 		fork
 			begin

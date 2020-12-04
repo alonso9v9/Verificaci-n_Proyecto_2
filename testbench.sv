@@ -9,13 +9,14 @@
 // Este script esta estructurado en System Verilog
 
 `include "Router_library.sv"
-
 `include "transacciones.sv"
+`include "Generador.sv"
 `include "disp.sv"
 `include "driver.sv"
 `include "monitor.sv"
-`include "Generador.sv"
+
 `include "ambiente.sv"
+`include "Top.sv"
 
 
 `include "Rand_Parameters.sv"
@@ -30,7 +31,7 @@ import Rand_Parameters::*;
 
 module test_bench;
   reg clk;
-
+  
   intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
 
   always #5 clk=~clk;
@@ -39,18 +40,17 @@ module test_bench;
   (.pndng(_if.pndng),.data_out(_if.data_out), .popin(_if.popin),.pop(_if.pop),
   	.data_out_i_in(_if.data_out_i_in),.pndng_i_in(_if.pndng_i_in),.clk(_if.clk),.reset(_if.reset));
 
-  ambiente #(.pckg_sz(pckg_sz),.disps(16),.fifo_depth(fifo_depth)) inst_amb;
-
-
+  Top #(.pckg_sz(pckg_sz),.disps(16), .fifo_depth(fifo_depth)) inst_top;
+  
   initial begin
   	clk = 0;
     _if.reset = 1;
     #10
     _if.reset = 0;
-    inst_amb=new(); 
-    inst_amb._if=_if;
+    inst_top=new();
+    inst_top._if=_if;
     fork
-       inst_amb.run();
+       inst_top.run();
     join_none
   end
   
@@ -62,4 +62,6 @@ module test_bench;
   end
 
 endmodule  
+
+
 
