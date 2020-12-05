@@ -69,27 +69,21 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
             inst_amb.aGen_inst.iter=8; 
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
-                    item_top=new;
-                    if(i%4==0)begin
-                      item_top.pyld_espec={py_size{4'h0}}; 
-                     top_aGENte_mbx.put(item_top) ;
-                          end else
-                    if(i%4==1)begin
-                      item_top.pyld_espec={py_size{4'hf}};
-                      top_aGENte_mbx.put(item_top) ;
-                          end else
-                    if(i%4==2)begin
-                      item_top.pyld_espec={py_size{4'hA}};
-                      $display("[T=%0t]unosceros",$time);
-                          end else
-                    if(i%4==3)begin
-                      item_top.pyld_espec={py_size{4'h5}};
-                      $display("[T=%0t]cerosunos",$time);
-                       
-                    end
+                item_top=new;
+                if(i%4==0)begin
+                  item_top.pyld_espec={py_size{4'h0}}; 
+                  end else
+                if(i%4==1)begin
+                  item_top.pyld_espec={py_size{4'hf}};
+                  end else
+                if(i%4==2)begin
+                  item_top.pyld_espec={py_size{4'hA}};
+                  end else
+                if(i%4==3)begin
+                  item_top.pyld_espec={py_size{4'h5}};
+                end
                 top_aGENte_mbx.put(item_top) ;
               end
-
         end
     /*
         esc1_pru3:
