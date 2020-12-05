@@ -74,7 +74,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%d, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%0b, Origen=%b, Delay= %0d",
              $time,
              tag, 
              this.Target,
@@ -99,7 +99,7 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
     tipos_accion tipo;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%d, Delay= %0d, Tipo = %0s",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0b, Delay= %0d, Tipo = %0s",
              $time,
              tag, 
              this.TargetO,

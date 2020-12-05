@@ -13,19 +13,25 @@ class Top#(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
         ambiente #(.pckg_sz(pckg_sz),.disps(16),.fifo_depth(fifo_depth)) inst_amb;  //Definicion del ambiente de la prueba.
     
   virtual intfz #(.pckg_sz(pckg_sz))_if; //Definicion a la interface que se conecta el DUT.
-  
+
+             event llen_espc_done;
  
   	   tipos_pruebas tipo_prueba;
        mlbx_top_aGENte top_aGENte_mbx;
        tipos_llenado tipo_llenado;
+  
+  Trans_top #(.pckg_sz(pckg_sz)) item_top=new;//creamos una nueva transacción de un escenario
 
 
-
+  
     function new;
     top_aGENte_mbx = new(); //creo el mailbox top-agente
     inst_amb       = new(); //creo la instancia del ambiente
     inst_amb.top_aGENte_mbx = top_aGENte_mbx;  //igualo los mailboxes
     inst_amb.aGen_inst.mlbx_top_aGENte0 = top_aGENte_mbx;  //igualo los mailboxes
+      
+     // inst_amb.aGen_inst.tipo_llenado=tipo_llenado;
+      
     endfunction
 
     task run();
@@ -45,28 +51,50 @@ class Top#(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
             esc1_pru1:
             begin
                 tipo_llenado = llenado_aleat;
-                inst_amb.aGen_inst.iter=1'b1; 
+                inst_amb.aGen_inst.iter=3; 
               for(int i=0; i<disps; i++)
                 inst_amb.disp_inst[i].on_off_fifodepth=1'b0;
                
             end
-      /*      esc1_pru2:
+        
+            esc1_pru2:
+     
             begin
-                tipo_llenado = llenado_espec;
-              Trans_top #(.pckg_sz(pckg_sz)) item_top;//creamos una nueva transacción de un escenario
+               inst_amb.aGen_inst.tipo_llenado = llenado_espec;
+
+
+                inst_amb.aGen_inst.iter=8; 
                 
-                for(int i=0; i<inst_amb.aGen_inst.iter; i++)
-                  for(int ant = 1; ant<inst_amb.aGen_inst.iter; ant=ant+4)
-                    
+
+
+                for(int i=0; i<inst_amb.aGen_inst.iter;i++)
                   
-                  
-                  
-                  
-                top_aGENte_mbx.put(item_top) ;
-                 
-                
+                  begin
+                        if(i%4==0)begin
+                          item_top.pyld_espec='h0; 
+                          top_aGENte_mbx.put(item_top) ;
+                          $display("[T=%0t]ceros",$time);
+                              end else
+                        if(i%4==1)begin
+                          item_top.pyld_espec='h0;
+                          top_aGENte_mbx.put(item_top) ;
+                          $display("[T=%0t]unos",$time);
+                              end else
+                        if(i%4==2)begin
+                          item_top.pyld_espec='h0;
+                          top_aGENte_mbx.put(item_top) ;
+                          $display("[T=%0t]unosceros",$time);
+                              end else
+                        if(i%4==3)begin
+                          item_top.pyld_espec=160'hf;
+                          top_aGENte_mbx.put(item_top) ;
+                          $display("[T=%0t]cerosunos",$time);
+                           
+                        end
+                  end
+
             end
-  */        /*
+        /*
             esc1_pru3:
             begin
             end

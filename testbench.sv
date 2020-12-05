@@ -31,6 +31,7 @@ import Rand_Parameters::*;
 
 module test_bench;
   reg clk;
+
   
   intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
 
@@ -49,6 +50,7 @@ module test_bench;
     _if.reset = 0;
     inst_top=new();
     inst_top._if=_if;
+    
     fork
        inst_top.run();
     join_none
