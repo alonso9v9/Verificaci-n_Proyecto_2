@@ -9,7 +9,7 @@
 // Este script esta estructurado en System Verilog
 
 
-class disp #(parameter pckg_sz=64,parameter Fif_Size=10);
+class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 	
     virtual intfz #(.pckg_sz(pckg_sz)) vif;
 

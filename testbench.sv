@@ -14,11 +14,8 @@
 `include "disp.sv"
 `include "driver.sv"
 `include "monitor.sv"
-
 `include "ambiente.sv"
 `include "Top.sv"
-
-
 `include "Rand_Parameters.sv"
 
 

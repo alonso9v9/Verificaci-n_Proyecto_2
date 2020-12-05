@@ -74,7 +74,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%0b, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%b, Origen=%b, Delay= %0d",
              $time,
              tag, 
              this.Target,
@@ -112,6 +112,7 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
   
 endclass
 
+
 //*********************************TRANSACCION DEL TOP***************************************
 
 class Trans_top#(parameter pckg_sz=40);
@@ -123,7 +124,7 @@ class Trans_top#(parameter pckg_sz=40);
     int  delay_espec;
 
       function print  (string tag); // Funcion para imprimir datos
-        $display("[T=%g] %s, Destino=%0b, Origen=%d, Payload=%0b, Mode=%0b, Delay= %d",
+        $display("[T=%g] %s, Destino=%0b, Origen=%d, Payload=%b, Mode=%0b, Delay= %d",
              $time,
              tag, 
              this.dstny_espec,
@@ -135,6 +136,9 @@ class Trans_top#(parameter pckg_sz=40);
       endfunction
 
 endclass
+
+
+
 
 //********************************DEFINICION DE MAILBOXES***********************************
 

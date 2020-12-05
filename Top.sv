@@ -8,19 +8,24 @@
 // Este script esta estructurado en System Verilog
 
 
-class Top#(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
+
+
+
+class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
    
         ambiente #(.pckg_sz(pckg_sz),.disps(16),.fifo_depth(fifo_depth)) inst_amb;  //Definicion del ambiente de la prueba.
-    
-  virtual intfz #(.pckg_sz(pckg_sz))_if; //Definicion a la interface que se conecta el DUT.
+       Trans_top #(.pckg_sz(pckg_sz)) item_top=new; //creamos una nueva transaccion de un escenario
 
-             event llen_espc_done;
+
+       virtual intfz #(.pckg_sz(pckg_sz))_if; //Definicion a la interface que se conecta el DUT.
+
+       event llen_espc_done;
  
   	   tipos_pruebas tipo_prueba;
        mlbx_top_aGENte top_aGENte_mbx;
        tipos_llenado tipo_llenado;
   
-  Trans_top #(.pckg_sz(pckg_sz)) item_top=new;//creamos una nueva transacción de un escenario
+ 
 
 
   
@@ -43,7 +48,7 @@ class Top#(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //         AQUI SE SETTEA EL NUMERO DE PRUEBA QUE SE DESEA CORRER EN EL TEST           //
-                           tipo_prueba    =    esc1_pru1;
+                           tipo_prueba    =    esc1_pru2;
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
     
@@ -60,37 +65,32 @@ class Top#(parameter pckg_sz =64,parameter disps =16,parameter fifo_depth=10);
             esc1_pru2:
      
             begin
-               inst_amb.aGen_inst.tipo_llenado = llenado_espec;
-
-
+                inst_amb.aGen_inst.tipo_llenado = llenado_espec;
                 inst_amb.aGen_inst.iter=8; 
-                
-
-
                 for(int i=0; i<inst_amb.aGen_inst.iter;i++)
-                  
                   begin
                         if(i%4==0)begin
                           item_top.pyld_espec='h0; 
-                          top_aGENte_mbx.put(item_top) ;
+                         // top_aGENte_mbx.put(item_top) ;
                           $display("[T=%0t]ceros",$time);
                               end else
                         if(i%4==1)begin
-                          item_top.pyld_espec='h0;
-                          top_aGENte_mbx.put(item_top) ;
+                          item_top.pyld_espec='hf;
+                        //  top_aGENte_mbx.put(item_top) ;
                           $display("[T=%0t]unos",$time);
                               end else
                         if(i%4==2)begin
-                          item_top.pyld_espec='h0;
-                          top_aGENte_mbx.put(item_top) ;
+                          item_top.pyld_espec='hA;
+                        //  top_aGENte_mbx.put(item_top) ;
                           $display("[T=%0t]unosceros",$time);
                               end else
                         if(i%4==3)begin
-                          item_top.pyld_espec=160'hf;
-                          top_aGENte_mbx.put(item_top) ;
+                          item_top.pyld_espec='h5;
+                        //  top_aGENte_mbx.put(item_top) ;
                           $display("[T=%0t]cerosunos",$time);
                            
                         end
+                    top_aGENte_mbx.put(item_top) ;
                   end
 
             end

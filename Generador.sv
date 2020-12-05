@@ -9,7 +9,7 @@
 // Este script esta estructurado en System Verilog
 
 //**************************************GENERADOR_AGENTE*******************************************
-class Generador_Agent#(parameter pckg_sz=32);
+class Generador_Agent#(parameter pckg_sz=40);
    mlbx_aGENte_drv   mlbx_aGENte_drv0;  //buzon que va hacia el driver
 
 
