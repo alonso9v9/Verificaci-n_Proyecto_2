@@ -5,15 +5,15 @@ module  bus_if_emu #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter [7
 	input clk,    // Clock
 	input rst,  // Asynchronous reset active high
 	
-	input [pckg_sz-1:0] Data_out_i_in, 
-	input pndng_i_in, 
+	input [pckg_sz-1:0] Data_out_i_in,
+	input pndng_i_in,
 	input pop,
-	output Popin,
-	output [pckg_sz-1:0] Data_out,
-	output pndng,
+	output reg Popin,
+	output reg [pckg_sz-1:0] Data_out,
+	output reg pndng,
 
-	output [pckg_sz-1:0] Data_out_i, 
-	output pndng_i, 
+	output [pckg_sz-1:0] Data_out_i,
+	output pndng_i,
 	input pop_i,
 	input [1:0] Trn,
 	input [pckg_sz-1:0] Data_in_i,
@@ -23,7 +23,7 @@ module  bus_if_emu #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter [7
 	bit Fifo_out[$:Fif_Size-1];
 
 	// DECO (por ahora usa el mismo código del DUT)
-	s_routing_table #(.id_r(id_r), .id_c(id_c), .pckg_sz(pckg_sz), .columns(columns), .rows(rows)) deco (Data_out_i_in, Data_out_i);
+	s_routing_table #(.id_r(id_r), .id_c(id_c), .pckg_sz(pckg_sz), .columns(columns), .rows(rows)) deco (.Data_in(Data_out_i_in), .Data_out_i(Data_out_i));
 
 	// Bloques combinacionales
 	assign pndng_i = pndng_i_in;
@@ -44,7 +44,7 @@ module  bus_if_emu #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter [7
 			pndng <= 0;
 		end else if (clk) begin
 			// pndng
-			if (size(Fifo_out)) begin
+			if (Fifo_out.size()) begin
 				pndng <= 1;
 			end else begin
 				pndng <= 0;
@@ -70,12 +70,12 @@ module arbiter #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter id_r =
 	input rst,	  // Asynchronous reset active high
 
 	input pndng_i [4],
-	input Data_out_i [4],
+	input [pckg_sz-1:0] Data_out_i [4],
 
-	output [1:0] Trn,
-	output push_i,
-	output pop_i,
-	output [pckg_sz-1:0] Data_in_i
+	output reg [1:0] Trn,
+	output reg push_i,
+	output reg pop_i,
+	output reg [pckg_sz-1:0] Data_in_i
 
 );
 	wire clk_en; // Clock enable
@@ -135,7 +135,7 @@ module router #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter id_r =0
 	input pop [4],
 	output Popin [4],
 	output [pckg_sz-1:0] Data_out [4],
-	output pndng [4],
+	output pndng [4]
 );
 
 wire [pckg_sz-1:0] Data_out_i [4];
@@ -188,119 +188,121 @@ module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40
 	input clk,    // Clock
 	input rst,  // Asynchronous reset active high
 	output logic pndng[ROWS*2+COLUMS*2],
-  	output [pckg_sz-1:0] data_out[ROWS*2+COLUMS*2],
+  	output logic [pckg_sz-1:0] data_out[ROWS*2+COLUMS*2],
   	output logic popin[ROWS*2+COLUMS*2],
   	input pop[ROWS*2+COLUMS*2],
   	input [pckg_sz-1:0]data_out_i_in[ROWS*2+COLUMS*2],
-  	input pndng_i_in[ROWS*2+COLUMS*2],
+  	input pndng_i_in[ROWS*2+COLUMS*2]
 );
 
 //// Conexiones entre routers
 
 /// Conexiones horizontales
 // Datos hacia la derecha
-wire pndng_der [ROWS:1][COLUMS:0];
-wire [pckg_sz-1:0] data_der [ROWS:1][COLUMS:0];
-wire popin_der [ROWS:1][COLUMS:0];
+logic pndng_der [ROWS:1][COLUMS:0];
+logic [pckg_sz-1:0] data_der [ROWS:1][COLUMS:0];
+logic pop_der [ROWS:1][COLUMS:0];
 // Datos hacia la izquierda
-wire pndng_iz [ROWS:1][COLUMS:0];
-wire [pckg_sz-1:0] data_iz [ROWS:1][COLUMS:0];
-wire pop_iz [ROWS:1][COLUMS:0];
+logic pndng_iz [ROWS:1][COLUMS:0];
+logic [pckg_sz-1:0] data_iz [ROWS:1][COLUMS:0];
+logic pop_iz [ROWS:1][COLUMS:0];
 
 /// Conexiones verticales
 // Datos hacia arriba
-wire pndng_ar [ROWS:0][COLUMS:1];
-wire [pckg_sz-1:0] data_ar [ROWS:0][COLUMS:1];
-wire popin_ar [ROWS:0][COLUMS:1];
+logic pndng_ar [ROWS:0][COLUMS:1];
+logic [pckg_sz-1:0] data_ar [ROWS:0][COLUMS:1];
+logic pop_ar [ROWS:0][COLUMS:1];
 // Datos hacia abajo
-wire pndng_ab [ROWS:0][COLUMS:1];
-wire [pckg_sz-1:0] data_ab [ROWS:0][COLUMS:1];
-wire pop_ab [ROWS:0][COLUMS:1];
+logic pndng_ab [ROWS:0][COLUMS:1];
+logic [pckg_sz-1:0] data_ab [ROWS:0][COLUMS:1];
+logic pop_ab [ROWS:0][COLUMS:1];
 
 genvar R;
 genvar C;
 int i;
 int ii;
 
-// I/O dispositivos 0 a 3
-for (i = 0; i < 4; i++) begin
+initial begin
+	// I/O dispositivos 0 a 3
+	for (i = 0; i < 4; i++) begin
 
-	ii = i + 1; // Para acomodar al índice de las columnas (inicia en columna 1 = i+1 = 0+1)
+		ii = i + 1; // Para acomodar al índice de las columnas (inicia en columna 1 = i+1 = 0+1)
 
-	// I
-	assign pop_ab[0][ii] = pop[i];
-	assign data_ab[0][ii] = data_out_i_in[i];
-	assign pndng_ab[0][ii] = pndng_i_in[i];
+		// I
+		pop_ab[0][ii] = pop[i];
+		data_ab[0][ii] = data_out_i_in[i];
+		pndng_ab[0][ii] = pndng_i_in[i];
 
-	// O
-	assign popin[ii] = pop_ar[0][i];
-	assign data_out[ii] = data_ar[0][i];
-	assign pndng[ii] = pndng_ar[0][i];
-end
+		// O
+		popin[i] = pop_ar[0][ii];
+		data_out[i] = data_ar[0][ii];
+		pndng[i] = pndng_ar[0][ii];
+	end
 
-// I/O dispositivos 4 a 7
-for (i = 4; i < 8; i++) begin
+	// I/O dispositivos 4 a 7
+	for (i = 4; i < 8; i++) begin
 
-	ii = i - 3; // Para acomodar el índice de las filas (inicia en fila 1 = i-3 = 4-3)
+		ii = i - 3; // Para acomodar el índice de las filas (inicia en fila 1 = i-3 = 4-3)
 
-	// I
-	assign pop_der[ii][0] = pop[i];
-	assign data_der[ii][0] = data_out_i_in[i];
-	assign pndng_der[ii][0] = pndng_i_in[i];
+		// I
+		pop_der[ii][0] = pop[i];
+		data_der[ii][0] = data_out_i_in[i];
+		pndng_der[ii][0] = pndng_i_in[i];
 
-	// O
-	assign popin[i] = pop_iz[ii][0];
-	assign data_out[i] = data_iz[ii][0];
-	assign pndng[i] = pndng_iz[ii][0];
-end
+		// O
+		popin[i] = pop_iz[ii][0];
+		data_out[i] = data_iz[ii][0];
+		pndng[i] = pndng_iz[ii][0];
+	end
 
-// I/O dispositivos 8 a 11
-for (i = 8; i < 12; i++) begin
+	// I/O dispositivos 8 a 11
+	for (i = 8; i < 12; i++) begin
 
-	ii = i - 7; // Para acomodar el índice de las columnas (inicia en columna 1 = i-7 = 8-7)
+		ii = i - 7; // Para acomodar el índice de las columnas (inicia en columna 1 = i-7 = 8-7)
 
-	// I
-	assign pop_ar[4][ii] = pop[i];
-	assign data_ar[4][ii] = data_out_i_in[i];
-	assign pndng_ar[4][ii] = pndng_i_in[i];
+		// I
+		pop_ar[4][ii] = pop[i];
+		data_ar[4][ii] = data_out_i_in[i];
+		pndng_ar[4][ii] = pndng_i_in[i];
 
-	// O
-	assign popin[i] = pop_ab[4][ii];
-	assign data_out[i] = data_ab[4][ii];
-	assign pndng[i] = pndng_ab[4][ii];
-end
+		// O
+		popin[i] = pop_ab[4][ii];
+		data_out[i] = data_ab[4][ii];
+		pndng[i] = pndng_ab[4][ii];
+	end
 
-// I/O dispositivos 12 a 15
-for (int i = 12; i < 16; i++) begin
+	// I/O dispositivos 12 a 15
+	for (int i = 12; i < 16; i++) begin
 
-	ii = i - 11; // Para acomodar el índice de las filas (inicia en fila 1 = i-11 = 12-11)
+		ii = i - 11; // Para acomodar el índice de las filas (inicia en fila 1 = i-11 = 12-11)
 
-	// I
-	assign pop_iz[ii][4] = pop[i];
-	assign data_iz[ii][4] = data_out_i_in[i];
-	assign pndng_iz[ii][4] = pndng_i_in[i];
+		// I
+		pop_iz[ii][4] = pop[i];
+		data_iz[ii][4] = data_out_i_in[i];
+		pndng_iz[ii][4] = pndng_i_in[i];
 
-	// O
-	assign popin[i] = pop_der[ii][4];
-	assign data_out[i] = data_der[ii][4];
-	assign pndng[i] = pndng_der[ii][4];
+		// O
+		popin[i] = pop_der[ii][4];
+		data_out[i] = data_der[ii][4];
+		pndng[i] = pndng_der[ii][4];
+	end
 end
 
 // Interconexiones de los routers
 generate
 	for (R = 1; R < 5; R++) begin
-		for (C = 1; C < 5; C++) begin
-			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) (
+		for (C = 1; C < 5; C++) begin : _n_
+			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) rtr_ (
 				.clk(clk),
 				.rst(rst),
 				
-				.Data_out_i_in({data_ab[R-1][C], data_iz[R][C], data_ar[R][C], data_der[R][C-1]}),
-				.pndng_i_in({pndng_ab[R-1][C], pndng_iz[R][C], pndng_ar[R][C], pndng_der[R][C-1]}),
-				.pop({pop_ab[R-1][C], pop_iz[R][C], pop_ar[R][C], pop_der[R][C-1]}),
+				.Data_out_i_in('{data_ab[R-1][C], data_iz[R][C], data_ar[R][C], data_der[R][C-1]}),
+				.pndng_i_in('{pndng_ab[R-1][C], pndng_iz[R][C], pndng_ar[R][C], pndng_der[R][C-1]}),
+				.pop('{pop_ab[R-1][C], pop_iz[R][C], pop_ar[R][C], pop_der[R][C-1]}),
 
-				.Popin({pop_ar[R-1][C], pop_der[R][C], pop_ab[R][C], pop_iz[R][C-1]}),
-				.Data_out({data_ar[R-1][C], data_der[R][C], data_ab[R][C], data_iz[R][C-1]}),
-				.pndng({pndng_ar[R-1][C], pndng_der[R][C], pndng_ab[R][C], pndng_iz[R][C-1]}),
+				.Popin('{pop_ar[R-1][C], pop_der[R][C], pop_ab[R][C], pop_iz[R][C-1]}),
+				.Data_out('{data_ar[R-1][C], data_der[R][C], data_ab[R][C], data_iz[R][C-1]}),
+				.pndng('{pndng_ar[R-1][C], pndng_der[R][C], pndng_ab[R][C], pndng_iz[R][C-1]})
 				);
 		end
 	end
