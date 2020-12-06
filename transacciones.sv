@@ -13,7 +13,7 @@
 
 
 //****************************DEFINICION DE TIPOS DE LLENADO********************************
-typedef enum{llenado_aleat,llenado_espec} tipos_llenado;
+typedef enum{llenado_aleat,llenado_pld_espec,llenado_dtny_espec,llenado_orin_espec} tipos_llenado;
 
 
 //********************************DEFINICION DE ACCION *************************************
@@ -51,6 +51,9 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   constraint limitorin {0<=Origen;Origen<=15;}
   constraint limitorin_alter {0<=Origen_alternativo;Origen_alternativo<=15;}
   constraint limitdly {0<=delay;delay<=10;}
+  
+  
+ // constraint direc {Target dist {8'b00000001:=10,8'b00000010:=10,8'b00000011:=10,8'b00000100:=10,8'b00010000:=10,8'b00100000:=10,8'b00110000:=10,8'b01000000:=10,8'b01010001:=10,8'b01010010:=10,8'b01010011:=10,8'b01010100:=10,8'b00010101:=10,8'b00100101:=10,8'b00110101:=10,8'b01000101:=10,8'b00000000:=1000};}
    
 //Esto para que el origen no sea igual al destino
 

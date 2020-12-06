@@ -11,8 +11,7 @@
 //**************************************GENERADOR_AGENTE*******************************************
 class Generador_Agent#(parameter pckg_sz=40);
    mlbx_aGENte_drv   mlbx_aGENte_drv0;  //buzon que va hacia el driver
-
-
+   Trans_in #(.pckg_sz(pckg_sz)) item;
    //mlbx_aGENte_chckr mlbx_aGENte_chckr0; //buzon que va hacia el Checker
    mlbx_top_aGENte   mlbx_top_aGENte0;   //buzon que se ocupa para tener las transacciones especificas
    Trans_top #(.pckg_sz(pckg_sz)) item_top;//creamos una nueva transacción de un escenario
@@ -28,7 +27,7 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado aleatorio", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
-              Trans_in #(.pckg_sz(pckg_sz)) item = new;//creamos una nueva transacción
+               item = new;//creamos una nueva transacción
                item.randomize();//generamos los valores aleatorios
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
@@ -41,21 +40,52 @@ class Generador_Agent#(parameter pckg_sz=40);
           end
       
         
-        llenado_espec: //genera una transaccion con algunos datos especificos
+        llenado_pld_espec: //genera una transaccion con algunos datos especificos
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
 
-              Trans_in #(.pckg_sz(pckg_sz)) item = new;//creamos una nueva transacción
+              item = new;//creamos una nueva transacción
+                item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
+                //aquí le caemos encima a lo que especifique el usuario
+                    mlbx_top_aGENte0.get(item_top) ;
+                        item.payload  =  item_top.pyld_espec;
+                    $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
+                    //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
+                    mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver
+					         item.print("[Generator] Transaccion enviada al driver");
+            end
+                $display ("[T=%0t] [Generator] Done generation of %0d items", $time, iter);
+          end
+  
+        llenado_dtny_espec: //genera una transaccion con algunos datos especificos
+          begin 
+            $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
+            for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
+
+                item = new;//creamos una nueva transacción
                 item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
                         item.Target   =  item_top.dstny_espec;
+                    $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
+                    //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
+                    mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver
+					         item.print("[Generator] Transaccion enviada al driver");
+            end
+                $display ("[T=%0t] [Generator] Done generation of %0d items", $time, iter);
+          end
+      
+        llenado_orin_espec: //genera una transaccion con algunos datos especificos
+          begin 
+            $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
+            for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
+
+               item = new;//creamos una nueva transacción
+                item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
+                //aquí le caemos encima a lo que especifique el usuario
+                    mlbx_top_aGENte0.get(item_top) ;
                         item.Origen   =  item_top.orgn_espec;
-                        item.payload  =  item_top.pyld_espec;
-                        item.mode     =  item_top.mode_espec;
-                        item.delay    =  item_top.delay_espec;
-             
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
                     mlbx_aGENte_drv0.put(item) ; //manda el item hacia el driver

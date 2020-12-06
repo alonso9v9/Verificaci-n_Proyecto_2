@@ -65,7 +65,7 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         esc1_pru2:
  
         begin
-            inst_amb.aGen_inst.tipo_llenado = llenado_espec;
+            inst_amb.aGen_inst.tipo_llenado = llenado_pld_espec;
             inst_amb.aGen_inst.iter=8; 
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
@@ -85,13 +85,81 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
                 top_aGENte_mbx.put(item_top) ;
               end
         end
-    /*
+    
         esc1_pru3:
+          
         begin
+            inst_amb.aGen_inst.tipo_llenado = llenado_dtny_espec;
+            inst_amb.aGen_inst.iter=32; 
+            for(int i=0; i<inst_amb.aGen_inst.iter;i++)
+              begin
+                item_top=new;
+                if(i%4==0)begin
+                  item_top.dstny_espec=8'b00000001; 
+                  end else
+                if(i%4==1)begin
+                  item_top.dstny_espec=8'b00000010;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00000011;
+                  end else
+                if(i%4==3)begin
+                  item_top.dstny_espec=8'b00000100;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00010000;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00100000;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00110000;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01000000;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01010001;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01010010;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01010011;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01010100;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00010101;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00100101;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b00110101;
+                  end else
+                if(i%4==2)begin
+                  item_top.dstny_espec=8'b01000101;
+                  end 
+                
+                top_aGENte_mbx.put(item_top) ;
+              end
         end
-        esc1_pru4: 
+       
+        esc2_pru1: 
         begin
+            inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
+            inst_amb.aGen_inst.iter=3;
+            inst_amb.aGen_inst.item=new;
+        //    inst_amb.aGen_inst.item.direc.constraint_mode(1);
+            inst_amb.aGen_inst.item.limittar.constraint_mode(0);
+            for(int i=0; i<disps; i++)
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;
+           
+          
         end
+      /*
         esc2_pru1:
         begin
         end
