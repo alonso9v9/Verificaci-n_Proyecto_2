@@ -67,7 +67,7 @@ class monitor #(parameter pckg_sz=40);
 				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
 				dvcs[auto_i].vif = vif;
 				dvcs[auto_i].run();
-				$display("[Monitor] run %g.", auto_i);
+				$display("[Monitor] run %g.",auto_i);
 			join_none
 		end
 
