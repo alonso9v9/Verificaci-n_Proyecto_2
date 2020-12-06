@@ -184,7 +184,7 @@ arbiter #(.pckg_sz(pckg_sz), .Fif_Size(Fif_Size), .id_r(id_r), .id_c(id_c), .col
 endmodule
 
 // Definición del emulador del mesh
-module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4, parameter bdcst= {8{1'b1}})(
+module mesh_emu #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4)(
 	input clk,    // Clock
 	input rst,  // Asynchronous reset active high
 	output logic pndng[ROWS*2+COLUMS*2],
@@ -310,3 +310,77 @@ endgenerate
 
 endmodule
 
+class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
+	// Mailboxes
+	mlbx_mntr_chckr from_mntr_mlbx; 	// Monitor - Checker
+	mlbx_aGENte_chckr from_sb_mlbx; 	// Scoreboard - checker
+	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
+
+	// Transacciones
+	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; // Del monitor
+	Trans_in #(.pckg_sz(pckg_sz)) from_sb_item;  // Del scoreboard
+	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; // Hacia el scoreboard
+
+	// Interfaz virtual para conectar el emulador del mesh al driver
+	virtual intfz #(.pckg_sz(pckg_sz)) vif;
+
+	// Transacciones recibidas del scoreboard
+	// Cada transacción generada por el agente se guarda en un queue según el destino de la transacción
+	Trans_in sb_generadas [16][$]; 	// Se crea un queue para cada dispositivo
+
+
+	Trans_out sb_completadas [$];  	// Este queue guardará las transacciones que se completen con éxito, se envía al scoreboard
+
+	Trans_in sb_no_rec [$]; 	   	// Este queue guardará las transacciones generadas que no se recibieron en el monitor
+
+	Trans_out sb_rec_inc [$]; 	   	// Este queue guardará las transacciones recibidas en el monitor que no se generaron por el test
+
+	// Instancia del emulador del mesh
+	mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
+		.clk          (vif.clk),
+		.rst          (vif.reset),
+		.pndng        (vif.pndng),
+		.data_out     (vif.data_out),
+		.popin        (vif.popin),
+		.pop          (vif.pop),
+		.data_out_i_in(vif.data_out_i_in),
+		.pndng_i_in   (vif.pndng_i_in)
+	);
+
+	// Direcciones de los paquetes
+	bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
+
+	function new ();
+
+		foreach(sb_generadas[i]) begin
+			this.sb_generadas[i] = {};
+		end
+
+		this.sb_completadas = {};
+		this.sb_no_rec = {};
+		this.sb_rec_inc = {}
+	endfunction
+
+	task run();
+		$display("[%g] El checker fue inicializado.", $time);
+		fork
+			begin 
+				from_sb_mlbx.get(from_sb_item);
+				from_sb_item.print("[Checker] Transacción recibida del Scoreboard.");
+				foreach(dir[i]) begin
+				if (dir[i] == from_sb_item.Target) begin
+					sb_generadas[i].push_front(from_sb_item);
+				end
+				end
+			end
+
+			begin
+				from_mntr_mlbx.get(from_mntr_item);
+				from_mntr_item.print("[Checker] Transacción recibida del Monitor");
+				from_mntr_item.TargetO from_mntr_item.modeO from_mntr_item.payloadO from_mntr_item.tipo
+			end
+		join_none
+
+	endtask : run
+
+endclass : checker 

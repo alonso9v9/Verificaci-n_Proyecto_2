@@ -22,7 +22,7 @@ class read_dvc #(parameter pckg_sz=40);
 	task run();
 		$display("[T=%g] [Monitor] Dispositivo %g inicializado.", $time, tag);
 		@(posedge vif.clk);
-		$display("[Monitor] Clock recibido por el dispositivo %g.", tag);
+		$display("[T=%g] [Monitor] Clock recibido por el dispositivo %g.", $time, tag);
 		forever begin
 			vif.pop[tag] <= 0;
 			if (vif.pndng[tag]) begin 
@@ -67,7 +67,7 @@ class monitor #(parameter pckg_sz=40);
 				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
 				dvcs[auto_i].vif = vif;
 				dvcs[auto_i].run();
-				$display("[Monitor] run %g",auto_i);
+				$display("[Monitor] run %g.", auto_i);
 			join_none
 		end
 
