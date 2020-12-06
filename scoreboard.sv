@@ -37,6 +37,7 @@ class scoreboard;
 		$display("[%g] [Scoreboard] Reporte generado", $time);
 	endtask : run
 
+	// Este recibe las transacciones del generador, las guarda en sb_generadas y se las envía al checker
 	task run_sb_gen();
 		forever begin
 			
@@ -53,6 +54,10 @@ class scoreboard;
 		end
 	endtask : run_sb_gen
 
+	// Este task se encarga de recibir los reportes del checker y guardarlos en el archivo .csv
+	////////////////////////////////////////////////////////////////////////
+	// FALTA LO DEL .CSV ///////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////
 	task run_sb_chckr();
 		forever begin
 			
