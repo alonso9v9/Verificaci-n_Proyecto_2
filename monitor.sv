@@ -39,7 +39,7 @@ class read_dvc #(parameter pckg_sz=40);
 					to_chckr.tipo = normal;
 				end
 				to_chckr.delayO=$time;
-
+				to_chckr.dvc = tag;
 				to_chckr_mlbx.put(to_chckr);
 				to_chckr.print("[Monitor] Tansaccion leida");
 				@(posedge vif.clk);
@@ -53,14 +53,12 @@ endclass
 
 class monitor #(parameter pckg_sz=40);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
-	mlbx_mntr_chckr to_chckr_mlbx_p [16]; // Mailboxes para cada dispositivo
+	mlbx_mntr_chckr to_chckr_mlbx_p; // Mailboxes para cada dispositivo
 	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
 
 	task run();
 
-		foreach(to_chckr_mlbx_p [i]) begin
-			to_chckr_mlbx_p [i]=new();
-		end
+		to_chckr_mlbx_p [i]=new();
 		$display("[T=%g] El monitor fue inicializado.", $time);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
@@ -68,13 +66,13 @@ class monitor #(parameter pckg_sz=40);
 				begin
 					dvcs[auto_i] = new();
 					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
+					dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p;
 					dvcs[auto_i].vif = vif;
 					dvcs[auto_i].run();
 				end
 			join_none
 		end
-
+		
 	endtask
 
 endclass

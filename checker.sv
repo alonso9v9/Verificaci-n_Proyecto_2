@@ -312,14 +312,14 @@ endmodule
 
 class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
-	mlbx_mntr_chckr from_mntr_mlbx; 	// Monitor - Checker
-	mlbx_aGENte_chckr from_sb_mlbx; 	// Scoreboard - checker
-	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
+	mlbx_mntr_chckr from_mntr_mlbx[16]; 	// Monitor - Checker
+	mlbx_aGENte_chckr from_sb_mlbx; 		// Scoreboard - checker
+	mlbx_mntr_chckr to_sb_mlbx; 			// Checker - scoreboard
 
 	// Transacciones
-	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; // Del monitor
-	Trans_in #(.pckg_sz(pckg_sz)) from_sb_item;  // Del scoreboard
-	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; // Hacia el scoreboard
+	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 	// Del monitor
+	Trans_in #(.pckg_sz(pckg_sz)) from_sb_item;  	// Del scoreboard
+	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 		// Hacia el scoreboard
 
 	// Interfaz virtual para conectar el emulador del mesh al driver
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
@@ -329,23 +329,21 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	Trans_in sb_generadas [16][$]; 	// Se crea un queue para cada dispositivo
 
 
-	Trans_out sb_completadas [$];  	// Este queue guardará las transacciones que se completen con éxito, se envía al scoreboard
-
 	Trans_in sb_no_rec [$]; 	   	// Este queue guardará las transacciones generadas que no se recibieron en el monitor
 
 	Trans_out sb_rec_inc [$]; 	   	// Este queue guardará las transacciones recibidas en el monitor que no se generaron por el test
 
 	// Instancia del emulador del mesh
-	mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
-		.clk          (vif.clk),
-		.rst          (vif.reset),
-		.pndng        (vif.pndng),
-		.data_out     (vif.data_out),
-		.popin        (vif.popin),
-		.pop          (vif.pop),
-		.data_out_i_in(vif.data_out_i_in),
-		.pndng_i_in   (vif.pndng_i_in)
-	);
+	// mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
+	// 	.clk          (vif.clk),
+	// 	.rst          (vif.reset),
+	// 	.pndng        (vif.pndng),
+	// 	.data_out     (vif.data_out),
+	// 	.popin        (vif.popin),
+	// 	.pop          (vif.pop),
+	// 	.data_out_i_in(vif.data_out_i_in),
+	// 	.pndng_i_in   (vif.pndng_i_in)
+	// );
 
 	// Direcciones de los paquetes
 	bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
@@ -356,31 +354,53 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 			this.sb_generadas[i] = {};
 		end
 
-		this.sb_completadas = {};
 		this.sb_no_rec = {};
 		this.sb_rec_inc = {};
 	endfunction
 
-	task run();
-		$display("[%g] El checker fue inicializado.", $time);
+	task run(event fin);
 		fork
-			begin 
+			begin
+				$display("[T = %g] El checker fue inicializado.", $time);
 				from_sb_mlbx.get(from_sb_item);
 				from_sb_item.print("[Checker] Transacción recibida del Scoreboard.");
 				foreach(dir[i]) begin
-				if (dir[i] == from_sb_item.Target) begin
-					sb_generadas[i].push_front(from_sb_item);
-				end
+					if (dir[i] == from_sb_item.Target) begin
+						sb_generadas[i].push_front(from_sb_item);
+					end
 				end
 			end
-
 			begin
 				from_mntr_mlbx.get(from_mntr_item);
 				from_mntr_item.print("[Checker] Transacción recibida del Monitor");
-				// if from_mntr_item.TargetO from_mntr_item.modeO from_mntr_item.payloadO from_mntr_item.tipo
+				// if tipo
+				// Recibo del monitor y reviso que sea consistente con el modelo del mesh
+				if ((from_mntr_item.TargetO == vif.data_out[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == vif.data_out[pckg_sz-17:pckg_sz-17]) & (from_mntr_item.payloadO == vif.data_out[pckg_sz-18:0])) begin
+					// Busco la transacción en la lista de transacciones generadas por el aGENt
+					if (!(sb_generadas.size()==0)) begin
+						foreach(sb_generadas[i]) begin
+							if ((from_mntr_item.TargetO == sb_generadas[i].Target) & (from_mntr_item.modeO == sb_generadas[i].mode) & (from_mntr_item.payloadO == sb_generadas[i].payload) & (from_mntr_item.tipo == sb_generadas[i].tipo)) begin
+								to_sb_item = new;
+								// Igualo el item recibido del mntr al que se va a enviar al sb para evitar modificar el item recibido
+								to_sb_item = from_mntr_item;
+								// Se calcula el delay de la transacción
+								to_sb_item.delayO = from_mntr_item.delayO - sb_generadas[i].tiempo;
+								// Se envía la transacción completada al sb								
+								to_sb_mlbx.put(to_sb_item);
+								$display("[T = %g] [Checker] Transacción correcta.",$time);
+							end
+						end
+					end else begin
+						$display("[T = %g] [Checker] Se recibió una transacción no generada por el test",$time);
+					end
+				end
 			end
 		join_none
-
+		wait (fin.triggered);
+		
+		// Listas 
 	endtask : run
+
+
 
 endclass : checker 

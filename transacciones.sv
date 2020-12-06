@@ -98,13 +98,15 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
     bit [pckg_sz-9:pckg_sz-16] TargetO; 
     bit [pckg_sz-17:pckg_sz-17] modeO;
     bit [pckg_sz-18:0] payloadO;
-    int  delayO;
+    int delayO;
+    int dvc;
     tipos_accion tipo;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%0b, Delay= %0d, Tipo = %0s",
+    $display("[T=%g] %s, Recibido en dvc %g, Target=%b, Modo=%b, Payload=%0b, Delay= %0d, Tipo = %0s",
              $time,
-             tag, 
+             tag,
+             this.dvc,
              this.TargetO,
              this.modeO,
              this.payloadO,

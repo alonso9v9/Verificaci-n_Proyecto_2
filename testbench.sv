@@ -29,7 +29,8 @@ import Rand_Parameters::*;
 module test_bench;
   reg clk;
 
-  
+  event fin; //// Evento utilizado por el checker y el sb para generar reportes finales
+
   intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
 
   always #5 clk=~clk;
@@ -56,6 +57,7 @@ module test_bench;
   always@(posedge clk) begin
     if ($time > 100000)begin
       $display("Test_bench: Tiempo límite de prueba en el test_bench alcanzado");
+      -> fin;
       $finish;
     end
   end
