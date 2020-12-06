@@ -47,14 +47,10 @@ class Generador_Agent#(parameter pckg_sz=40);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
 
               Trans_in #(.pckg_sz(pckg_sz)) item = new;//creamos una nueva transacción
-                item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
+              item.randomize();//generamos los valores aleatorios        {{{{{PROBAR}}}}}
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
-                        item.Target   =  item_top.dstny_espec;
-                        item.Origen   =  item_top.orgn_espec;
-                        item.payload  =  item_top.pyld_espec;
-                        item.mode     =  item_top.mode_espec;
-                        item.delay    =  item_top.delay_espec;
+                    item.payload  =  item_top.pyld_espec;
              
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     //mlbx_aGENte_chckr0.put(item);//manda el item hacia el checker
