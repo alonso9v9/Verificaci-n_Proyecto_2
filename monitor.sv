@@ -24,13 +24,14 @@ class read_dvc #(parameter pckg_sz=40);
 		@(posedge vif.clk);
 		$display("[T=%g] [Monitor] Clock recibido por el dispositivo %g.", $time, tag);
 		forever begin
-			vif.pop[tag] <= 0;
+			// $display("[T=%g] [Monitor] Pending %b",$time, vif.pndng[tag]);
+			vif.pop[tag] = 0;
 			if (vif.pndng[tag]) begin 
-				data=vif.data_out[tag];
+				data = vif.data_out[tag];
 				to_chckr.TargetO 	= data[pckg_sz-9:pckg_sz-16];
 				to_chckr.modeO 		= data[pckg_sz-17];
 				to_chckr.payloadO 	= data[pckg_sz-18:0];
-				vif.pop[tag] <= 1;
+				vif.pop[tag] = 1;
 				if (vif.reset) begin
 					to_chckr.tipo = reset;
 				end else
@@ -40,7 +41,9 @@ class read_dvc #(parameter pckg_sz=40);
 				to_chckr.delayO=$time;
 
 				to_chckr_mlbx.put(to_chckr);
-				to_chckr.print("[Monitor] Tansaccion leida.");	
+				to_chckr.print("[Monitor] Tansaccion leida");
+				@(posedge vif.clk);
+					vif.pop[tag] = 0;
 			end
 			@(posedge vif.clk);
 		end
@@ -62,12 +65,13 @@ class monitor #(parameter pckg_sz=40);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
-				dvcs[auto_i] = new();
-				dvcs[auto_i].tag = auto_i;
-				dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
-				dvcs[auto_i].vif = vif;
-				dvcs[auto_i].run();
-				$display("[Monitor] run %g.",auto_i);
+				begin
+					dvcs[auto_i] = new();
+					dvcs[auto_i].tag = auto_i;
+					dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p[auto_i];
+					dvcs[auto_i].vif = vif;
+					dvcs[auto_i].run();
+				end
 			join_none
 		end
 
