@@ -25,7 +25,7 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   mlbx_top_aGENte top_aGENte_mbx;
   tipos_llenado tipo_llenado;
   
- 
+  bit dir;
   parameter py_size=pckg_sz-17;
 
   
@@ -34,7 +34,6 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   inst_amb       = new(); //creo la instancia del ambiente
   inst_amb.top_aGENte_mbx = top_aGENte_mbx;  //igualo los mailboxes
   inst_amb.aGen_inst.mlbx_top_aGENte0 = top_aGENte_mbx;  //igualo los mailboxes
-
    // inst_amb.aGen_inst.tipo_llenado=tipo_llenado;
     
   endfunction

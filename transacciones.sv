@@ -45,11 +45,11 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   int tiempo;
 
   // Valores válidos de direcciones de los dispositivos
-  bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
-  // Restringir las direcciones al aleatorizar
-  constraint limittar {Target inside {dir};}
-  constraint limitorin {0<=Origen;Origen<=15;}
+// Restringir las direcciones al aleatorizar
+  constraint limittar {Target inside {8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};}
+  constraint limitorin {Origen>=0;Origen<=15;}
   constraint limitorin_alter {0<=Origen_alternativo;Origen_alternativo<=15;}
+  constraint difor{Origen!=Origen_alternativo;}
   constraint limitdly {0<=delay;delay<=10;}
   
   
@@ -77,7 +77,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   
   
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Target=%0b, Modo=%b, Payload=%b, Origen=%b, Delay= %0d",
+    $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%b, Origen=%b, Delay= %0d",
              $time,
              tag, 
              this.Target,
