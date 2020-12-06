@@ -358,7 +358,7 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 
 		this.sb_completadas = {};
 		this.sb_no_rec = {};
-		this.sb_rec_inc = {}
+		this.sb_rec_inc = {};
 	endfunction
 
 	task run();
@@ -377,7 +377,7 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 			begin
 				from_mntr_mlbx.get(from_mntr_item);
 				from_mntr_item.print("[Checker] Transacción recibida del Monitor");
-				from_mntr_item.TargetO from_mntr_item.modeO from_mntr_item.payloadO from_mntr_item.tipo
+				// if from_mntr_item.TargetO from_mntr_item.modeO from_mntr_item.payloadO from_mntr_item.tipo
 			end
 		join_none
 
