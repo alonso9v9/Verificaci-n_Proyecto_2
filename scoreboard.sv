@@ -32,6 +32,9 @@ class scoreboard;
 			run_sb_gen;
 			run_sb_chckr;
 		join_none
+		wait (fin.triggered);
+		// Generar reportes
+		$display("[%g] [Scoreboard] Reporte generado", $time);
 	endtask : run
 
 	task run_sb_gen();
