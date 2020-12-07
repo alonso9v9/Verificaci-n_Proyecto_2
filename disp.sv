@@ -32,6 +32,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 
 
 	task run();
+		vif.pndng_i_in[id]=0;
 
    		if(on_off_fifodepth)begin
         	bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
@@ -46,13 +47,15 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 					@(posedge vif.clk);
 					if(vif.popin[id])begin
 						Fifo_in.pop_back();
-						vif.pndng_i_in[id]=0;
+						if (!Fifo_in.size()) begin
+							vif.pndng_i_in[id]=0;
+						end
 					end
 				end
 			end
 			begin
 				forever begin 
-					Trans_in #(.pckg_sz(pckg_sz)) transaction; 
+					Trans_in #(.pckg_sz(pckg_sz)) transaction=new(); 
 					vif.reset=0;
 					espera = 0;
 
