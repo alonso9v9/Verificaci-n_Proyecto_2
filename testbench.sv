@@ -93,15 +93,15 @@ module test_bench;
   // aserciones de la interfaz
 
   property pnd_pop(pndng,pop,clk);
-    @(posedge clk) $rose (pndng) |-> ##[1:10] $rose (pop);
+    @(posedge clk) $rose (pndng) |-> ##[1:50] $rose (pop);
   endproperty
 
   property pndi_popi(pndi,popi,clk);
-    @(posedge clk) $rose (pndi) |-> ##[1:10] $rose (popi);
+    @(posedge clk) $rose (pndi) |-> ##[1:50] $rose (popi);
   endproperty  
 
   property res(reset,pndng,pop,pndi,popi,dato,dati,clk);
-    @(posedge clk) $rose (reset) |-> ##[1:10] (pndng==0&& pop==0&& pndi==0&& popi==0&& dato==0&& dati==0);
+    @(posedge clk) $rose (reset) |-> ##[1:50] (pndng==0&& pop==0&& pndi==0&& popi==0&& dato==0&& dati==0);
   endproperty
 
   generate
