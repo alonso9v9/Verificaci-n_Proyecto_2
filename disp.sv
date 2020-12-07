@@ -32,8 +32,8 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 
 
 	task run();
-		vif.pndng_i_in[id]=0;
-
+		vif.pndng_i_in[id]=0;	
+		vif.data_out_i_in[id]=0; 
    		if(on_off_fifodepth)begin
         	bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
       	end else begin
