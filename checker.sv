@@ -314,8 +314,8 @@ endmodule
 // Definición del módulo del checker
 class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
-	mlbx_mntr_chckr from_mntr_mlbx; 	// Monitor - Checker
-	mlbx_drv_disp from_drvr_mlbx; 		// Driver - checker
+	mlbx_mntr_chckr from_mntr_mlbx = new(); 	// Monitor - Checker
+	mlbx_drv_disp from_drvr_mlbx = new(); 		// Driver - checker
 	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
 
 	// Transacciones
@@ -348,9 +348,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	endfunction
 
 	task run(event fin);
-		from_drvr_mlbx = new();
-		from_mntr_mlbx = new();
-		to_sb_mlbx = new();
+
 		fork
 			begin
 				$display("[T=%g] El checker fue inicializado.", $time);
