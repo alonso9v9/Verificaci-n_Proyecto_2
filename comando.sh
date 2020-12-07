@@ -10,4 +10,4 @@ vcs -Mupdate testbench.sv  -o salida -full64 -debug_all -sverilog -l log_test +l
 ./salida -cm line+tgl+cond+fsm+branch+assert;
 #dve -full64 -covdir salida.vdb &
 
-./salida -gui&
+#./salida -gui&

@@ -38,12 +38,12 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
     
   endfunction
 
-  task run();
+  task run(event fin, event sb_done);
     inst_amb._if   = _if;    //igualo la interfaz virtual
     $display("[T=%0t] [Test] El test fue inicializado", $time);
      inst_amb.aGen_inst.item=new;
     fork
-       inst_amb.run(); 
+       inst_amb.run(fin, sb_done); 
     join_none
 
 /////////////////////////////////////////////////////////////////////////////////////////

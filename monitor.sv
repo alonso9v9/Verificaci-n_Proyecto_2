@@ -54,22 +54,36 @@ endclass
 
 class monitor #(parameter pckg_sz=40);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
-	mlbx_mntr_chckr to_chckr_mlbx_p; // Mailboxes para cada dispositivo
+	mlbx_mntr_chckr to_chckr_mlbx_p; 		// Mailboxe hacia el checker
+	mlbx_mntr_chckr mlbx_dvc[16];			// Mailboxes para cada dispositivo
 	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
+
+	Trans_out #(.pckg_sz(pckg_sz)) item;
 
 	task run();
 
-		to_chckr_mlbx_p = new();
 		$display("[T=%g] El monitor fue inicializado.", $time);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
 				begin
+					mlbx_dvc[auto_i] = new();
 					dvcs[auto_i] = new();
 					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = to_chckr_mlbx_p;
+					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
 					dvcs[auto_i].vif = vif;
 					dvcs[auto_i].run();
+				end
+			join_none
+		end
+		foreach(dvcs[i]) begin
+			automatic int auto_i = i;
+			fork
+				forever begin 
+					item = new();
+					mlbx_dvc[auto_i].get(item);
+					to_chckr_mlbx_p.put(item);
+					item.print("[Monitor] Transacción enviada al checker");
 				end
 			join_none
 		end

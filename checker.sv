@@ -348,9 +348,12 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	endfunction
 
 	task run(event fin);
+		from_drvr_mlbx = new();
+		from_mntr_mlbx = new();
+		to_sb_mlbx = new();
 		fork
 			begin
-				$display("[T = %g] El checker fue inicializado.", $time);
+				$display("[T=%g] El checker fue inicializado.", $time);
 				forever begin
 					from_drvr_mlbx.get(from_drvr_item);
 					from_drvr_item.print("[Checker] Transacción recibida del Driver.");
@@ -362,12 +365,13 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 				end
 			end
 			begin
+				$display("[T=%g] [Checker] Esperando mbx",$time);
 				forever begin
 					from_mntr_mlbx.get(from_mntr_item);
 					from_mntr_item.print("[Checker] Transacción recibida del Monitor");
 					
 					// Recibo del monitor y reviso que sea consistente con el modelo del mesh
-					pickup = vif.data_out[from_mntr_item.dvc];
+					// pickup = vif.data_out[from_mntr_item.dvc];
 					//if ((from_mntr_item.TargetO == pickup[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == pickup[pckg_sz-17]) & (from_mntr_item.payloadO == pickup[pckg_sz-18:0])) begin
 						// Busco la transacción en la lista de transacciones generadas por el aGENt
 						foreach(sb_generadas[i]) begin
@@ -409,16 +413,16 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		// Se verifica que todas las transacciones se hayan completado
 		foreach(sb_generadas[i]) begin
 			if (sb_generadas[i].size()) begin
-				$display("[T = %g] [Checker] ERROR: %g transacciones no llegaron al dispositivo %g.", $time, sb_generadas[i].size(), i);
+				$display("[T=%g] [Checker] ERROR: %g transacciones no llegaron al dispositivo %g.", $time, sb_generadas[i].size(), i);
 			end else begin 
-				$display("[T = %g] [Checker] PASS: Todas las transacciones generadas se recibieron con éxito en el dispositivo %g", $time, i);
+				$display("[T=%g] [Checker] PASS: Todas las transacciones generadas se recibieron con éxito en el dispositivo %g", $time, i);
 			end
 		end
 		// Se verifica si se recibieron transacciones incorrectas
 		if (sb_rec_inc.size()) begin
-			$display("[T = %g] [Checker] ERROR: Se recibieron %g transacciones incorrectas en el monitor.", $time, sb_rec_inc.size());
+			$display("[T=%g] [Checker] ERROR: Se recibieron %g transacciones incorrectas en el monitor.", $time, sb_rec_inc.size());
 		end else begin 
-			$display("[T = %g] [Checker] PASS: No se recibieron transaccione incorrectas en el monitor.", $time);
+			$display("[T=%g] [Checker] PASS: No se recibieron transaccione incorrectas en el monitor.", $time);
 		end
 	endtask : run
 

@@ -27,14 +27,18 @@ class scoreboard #(parameter pckg_sz);
 	endfunction
 
 	task run(event fin, event sb_done);
-		$display("[T = %g] El scoreboard fue inicializado.",$time);
+		from_agnt_mlbx = new();
+		from_chckr_mlbx = new();
+
+		$display("[T=%g] El scoreboard fue inicializado.",$time);
 		fork
 			run_sb_gen;
 			run_sb_chckr;
 		join_none
 		wait (fin.triggered);
 		// Generar reportes
-		$display("[%g] [Scoreboard] Reporte generado", $time);
+		$display("[T=%g] [Scoreboard] Reporte generado", $time);
+		-> sb_done;
 	endtask : run
 
 	// Este recibe las transacciones del generador, las guarda en sb_generadas y se las envía al checker

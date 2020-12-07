@@ -31,8 +31,8 @@ import Rand_Parameters::*;
 module test_bench;
   reg clk;
 
-  event fin; //// Evento utilizado por el checker y el sb para generar reportes finales
-
+  event fin;      //// Evento utilizado por el checker y el sb para generar reportes finales
+  event sb_done;  //// Indica cuando el sb termina de generar el reporte final
   intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
 
   intfz #(.pckg_sz(pckg_sz))emu_if (.clk(clk));
@@ -61,7 +61,7 @@ module test_bench;
   assign emu_if.pndng_i_in = _if.pndng_i_in;
   assign emu_if.pop = _if.pop;
   
-  
+
   Top #(.pckg_sz(pckg_sz),.disps(16), .fifo_depth(fifo_depth)) inst_top;
   
   initial begin
@@ -73,7 +73,7 @@ module test_bench;
     inst_top._if=_if;
     
     fork
-       inst_top.run();
+       inst_top.run(fin, sb_done);
     join_none
   end
   
@@ -81,6 +81,7 @@ module test_bench;
     if ($time > 100000)begin
       $display("Test_bench: Tiempo límite de prueba en el test_bench alcanzado");
       -> fin;
+      wait (sb_done.triggered);
       $finish;
     end
   end
