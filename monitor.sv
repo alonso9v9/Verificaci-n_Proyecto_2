@@ -14,7 +14,7 @@
 
 class read_dvc #(parameter pckg_sz=40);
 	mlbx_mntr_chckr to_chckr_mlbx;
-	Trans_out #(.pckg_sz(pckg_sz)) to_chckr=new;
+	Trans_out #(.pckg_sz(pckg_sz)) to_chckr;
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
 	int tag = 0;
 	bit [pckg_sz-1:0]data;
@@ -23,10 +23,12 @@ class read_dvc #(parameter pckg_sz=40);
 		$display("[T=%g] [Monitor] Dispositivo %g inicializado.", $time, tag);
 		@(posedge vif.clk);
 		$display("[T=%g] [Monitor] Clock recibido por el dispositivo %g.", $time, tag);
+		vif.pop[tag] = 0;
 		forever begin
 			// $display("[T=%g] [Monitor] Pending %b",$time, vif.pndng[tag]);
-			vif.pop[tag] = 0;
-			if (vif.pndng[tag]) begin 
+			@(posedge vif.pndng[tag]);
+				to_chckr=new;
+
 				data = vif.data_out[tag];
 				to_chckr.TargetO 	= data[pckg_sz-9:pckg_sz-16];
 				to_chckr.modeO 		= data[pckg_sz-17];
