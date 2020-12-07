@@ -65,10 +65,10 @@ class monitor #(parameter pckg_sz=40);
 		$display("[T=%g] El monitor fue inicializado.", $time);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
+			mlbx_dvc[auto_i] = new();
+			dvcs[auto_i] = new();
 			fork
 				begin
-					mlbx_dvc[auto_i] = new();
-					dvcs[auto_i] = new();
 					dvcs[auto_i].tag = auto_i;
 					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
 					dvcs[auto_i].vif = vif;
