@@ -56,6 +56,8 @@ module test_bench;
    .pndng_i_in   (emu_if.pndng_i_in)
   );
   */
+
+
   assign emu_if.reset = _if.reset;
   assign emu_if.data_out_i_in = _if.data_out_i_in;
   assign emu_if.pndng_i_in = _if.pndng_i_in;
@@ -85,6 +87,39 @@ module test_bench;
       $finish;
     end
   end
+
+
+
+    // aserciones de la interfaz
+
+  property pnd_pop(pndng,pop,clk);
+    @(posedge clk) $rose (pndng) |-> ##[1:10] $rose (pop);
+  endproperty
+
+  property pndi_popi(pndi,popi,clk);
+    @(posedge clk) $rose (pndi) |-> ##[1:10] $rose (popi);
+  endproperty  
+
+  property res(reset,pndng,pop,pndi,popi,dato,dati,clk);
+    @(posedge clk) $rose (reset) |-> ##[1:10] (pndng==0&& pop==0&& pndi==0&& popi==0&& dato==0&& dati==0);
+  endproperty
+
+  generate
+    for (genvar i = 0; i < count; i++) begin :assert_if_array
+      a_pnd_pop: assert property (pnd_pop(.pndng(_if.pndng[i]),.pop(_if.pop[i]),.clk(_if.clk))) else $display(“pnd_pop FAIL”);
+      c_pnd_pop: cover property (pnd_pop()) $display("pnd_pop PASS");
+
+      a_pndi_popi: assert property (pndi_popi(.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.clk(_if.clk))) else $display(“pndi_popi FAIL”);
+      c_pndi_popi: cover property (pndi_popi()) $display("pndi_popi PASS");
+
+      a_res: assert property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) else $display(“res FAIL”);
+      c_res: cover property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) $display("res PASS");
+    end
+  endgenerate
+
+
+
+
 
 endmodule  
 
