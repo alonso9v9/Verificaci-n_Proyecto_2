@@ -46,7 +46,6 @@ class read_dvc #(parameter pckg_sz=40);
 				to_chckr.print("[Monitor] Tansaccion leida");
 				@(posedge vif.clk);
 					vif.pop[tag] = 0;
-			end
 			@(posedge vif.clk);
 		end
 	endtask
