@@ -94,7 +94,29 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
     if(Target == 8'b00110101 && Origen == 14 )Origen <=Origen_alternativo;
     if(Target == 8'b01000101 && Origen == 15 )Origen <=Origen_alternativo;}
   
-  
+//Esto para que el origen  sea igual al destino
+
+  constraint orin_equal_dtny {
+    if(Target == 8'b00000001 )Origen <=0;
+    if(Target == 8'b00000010 )Origen <=1;
+    if(Target == 8'b00000011 )Origen <=2;
+    if(Target == 8'b00000100 )Origen <=3;
+    if(Target == 8'b00010000 )Origen <=4;
+    if(Target == 8'b00100000 )Origen <=5;
+    if(Target == 8'b00110000 )Origen <=6;
+    if(Target == 8'b01000000 )Origen <=7;
+    if(Target == 8'b01010001 )Origen <=8;
+    if(Target == 8'b01010010 )Origen <=9;
+    if(Target == 8'b01010011 )Origen <=10;
+    if(Target == 8'b01010100 )Origen <=11;
+    if(Target == 8'b00010101 )Origen <=12;
+    if(Target == 8'b00100101 )Origen <=13;
+    if(Target == 8'b00110101 )Origen <=14;
+    if(Target == 8'b01000101 )Origen <=15;}
+
+
+
+
   function print  (string tag); // Funcion para imprimir datos
     $display("[T=%g] %s, Target=%b, Modo=%b, Payload=%b, Origen=%b, Delay= %0d",
              $time,
