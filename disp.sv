@@ -18,6 +18,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
     mlbx_drv_disp drv_disp_mbx;
 
     // Para enviar las transacciones ejecutadas al checker
+    // Primero van al driver y de ahí al chekcer
     mlbx_drv_disp disp_chckr_mbx;
     Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
 
