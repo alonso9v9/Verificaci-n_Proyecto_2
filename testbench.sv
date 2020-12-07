@@ -90,7 +90,7 @@ module test_bench;
 
 
 
-    // aserciones de la interfaz
+  // aserciones de la interfaz
 
   property pnd_pop(pndng,pop,clk);
     @(posedge clk) $rose (pndng) |-> ##[1:10] $rose (pop);
@@ -105,20 +105,17 @@ module test_bench;
   endproperty
 
   generate
-    for (genvar i = 0; i < count; i++) begin :assert_if_array
-      a_pnd_pop: assert property (pnd_pop(.pndng(_if.pndng[i]),.pop(_if.pop[i]),.clk(_if.clk))) else $display(“pnd_pop FAIL”);
-      c_pnd_pop: cover property (pnd_pop()) $display("pnd_pop PASS");
+    for (genvar i = 0; i < 16; i++) begin :assert_if_array
+      a_pnd_pop: assert property (pnd_pop(.pndng(_if.pndng[i]),.pop(_if.pop[i]),.clk(_if.clk))) else $display("pnd_pop FAIL[%g]",i);
+      c_pnd_pop: cover property (pnd_pop(.pndng(_if.pndng[i]),.pop(_if.pop[i]),.clk(_if.clk))) $display("pnd_pop PASS[%g]",i);
 
-      a_pndi_popi: assert property (pndi_popi(.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.clk(_if.clk))) else $display(“pndi_popi FAIL”);
-      c_pndi_popi: cover property (pndi_popi()) $display("pndi_popi PASS");
+      a_pndi_popi: assert property (pndi_popi(.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.clk(_if.clk))) else $display("pndi_popi FAIL[%g]",i);
+      c_pndi_popi: cover property (pndi_popi(.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.clk(_if.clk))) $display("pndi_popi PASS[%g]",i);
 
-      a_res: assert property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) else $display(“res FAIL”);
-      c_res: cover property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) $display("res PASS");
+      a_res: assert property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) else $display("res FAIL[%g]",i);
+      c_res: cover property (res(.reset(_if.reset),.pndng(_if.pndng[i]),.pop(_if.pop[i]),.pndi(_if.pndng_i_in[i]),.popi(_if.popin[i]),.dato(_if.data_out[i]),.dati(_if.data_out_i_in[i]),.clk(_if.clk))) $display("res PASS[%g]",i);
     end
   endgenerate
-
-
-
 
 
 endmodule  
