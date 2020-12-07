@@ -1,8 +1,8 @@
-class scoreboard;
+class scoreboard #(parameter pckg_sz);
 	// Mailboxes
-	mlbx_aGENte_chckr from_agnt_mlbx; 	// Agente - checker
-	mlbx_aGENte_chckr to_chckr_mlbx; 	// Scoreboard - checker
-
+	mlbx_aGENte_sb from_agnt_mlbx; 		// Agente - scoreboard
+	mlbx_aGENte_sb to_chckr_mlbx; 		// Scoreboard - checker
+	mlbx_mntr_chckr from_chckr_mlbx; 	// Checker - scoreboard
 
 	Trans_in #(.pckg_sz(pckg_sz)) from_agnt_item;  // Item del agente
 
@@ -14,8 +14,8 @@ class scoreboard;
 
 	Trans_out sb_completadas [$];  	// Este queue guardará las transacciones que se completen con éxito
 
-	bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
-	
+	bit [8] dir [16] = {8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
+	// {{8'b00000001}, {8'b00000010}, {8'b00000011}, {8'b00000100}, {8'b00010000}, {8'b00100000}, {8'b00110000}, {8'b01000000}, {8'b01010001}, {8'b01010010}, {8'b01010011}, {8'b01010100}, {8'b00010101}, {8'b00100101}, {8'b00110101}, {8'b01000101}};
 	function new ();
 
 		foreach(sb_generadas[i]) begin

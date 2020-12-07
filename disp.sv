@@ -17,6 +17,10 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 
     mlbx_drv_disp drv_disp_mbx;
 
+    // Para enviar las transacciones ejecutadas al checker
+    mlbx_drv_disp disp_chckr_mbx;
+    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
+
     bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
     int espera;
 
@@ -29,10 +33,10 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 
 	task run();
 
-   if(on_off_fifodepth)begin
-          bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
-      end else begin
-          bit [pckg_sz-1:0] Fifo_in[$]; end
+   		if(on_off_fifodepth)begin
+        	bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
+      	end else begin
+          	bit [pckg_sz-1:0] Fifo_in[$]; end
 
 
 		$display("[T=%g] [Dispositivo=%g] inicializado.",$time,id);
@@ -51,6 +55,8 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 					Trans_in #(.pckg_sz(pckg_sz)) transaction; 
 					vif.reset=0;
 					espera = 0;
+
+					to_chckr = new();
 
 		      		//@(posedge vif.clk);
 		      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion.",$time,id);				
@@ -77,12 +83,18 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 							vif.pndng_i_in[transaction.Origen]=1;
 							transaction.tiempo = $time;
 			     			transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
+			     			// Envío al checker
+			     			to_chckr = transaction;
+			     			disp_chckr_mbx.put(to_chckr);
 						end
 
 						reset:begin
 							vif.reset=1;
 							transaction.tiempo = $time;
 							transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
+							// Envío al checker
+							to_chckr = transaction;
+			     			disp_chckr_mbx.put(to_chckr);
 						end
 
 						default:begin

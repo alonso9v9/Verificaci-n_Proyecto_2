@@ -58,7 +58,7 @@ class monitor #(parameter pckg_sz=40);
 
 	task run();
 
-		to_chckr_mlbx_p [i]=new();
+		to_chckr_mlbx_p = new();
 		$display("[T=%g] El monitor fue inicializado.", $time);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;

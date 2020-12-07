@@ -290,9 +290,9 @@ end
 
 // Interconexiones de los routers
 generate
-	for (R = 1; R < 5; R++) begin
-		for (C = 1; C < 5; C++) begin : _n_
-			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) rtr_ (
+	for (R = 1; R < 5; R++) begin : _r
+		for (C = 1; C < 5; C++) begin : _c
+			router # (.pckg_sz(pckg_sz), .Fif_Size(fifo_depth), .id_r(R), .id_c(C), .columns(COLUMS), .rows(ROWS)) rtr (
 				.clk(clk),
 				.rst(rst),
 				
@@ -310,11 +310,13 @@ endgenerate
 
 endmodule
 
-class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
+
+// Definición del módulo del checker
+class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
-	mlbx_mntr_chckr from_mntr_mlbx[16]; 	// Monitor - Checker
-	mlbx_aGENte_chckr from_sb_mlbx; 		// Scoreboard - checker
-	mlbx_mntr_chckr to_sb_mlbx; 			// Checker - scoreboard
+	mlbx_mntr_chckr from_mntr_mlbx; 	// Monitor - Checker
+	mlbx_aGENte_sb from_sb_mlbx; 		// Scoreboard - checker
+	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
 
 	// Transacciones
 	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 	// Del monitor
@@ -331,20 +333,10 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 
 	Trans_out sb_rec_inc [$]; 	   	// Este queue guardará las transacciones recibidas en el monitor que no se generaron por el test
 
-	// Instancia del emulador del mesh
-	// mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
-	// 	.clk          (vif.clk),
-	// 	.rst          (vif.reset),
-	// 	.pndng        (vif.pndng),
-	// 	.data_out     (vif.data_out),
-	// 	.popin        (vif.popin),
-	// 	.pop          (vif.pop),
-	// 	.data_out_i_in(vif.data_out_i_in),
-	// 	.pndng_i_in   (vif.pndng_i_in)
-	// );
-
 	// Direcciones de los paquetes
-	bit dir={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
+	bit [8] dir [16] ={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
+
+	bit [pckg_sz-1:0] pickup;
 
 	function new ();
 
@@ -375,7 +367,8 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 					from_mntr_item.print("[Checker] Transacción recibida del Monitor");
 					
 					// Recibo del monitor y reviso que sea consistente con el modelo del mesh
-					if ((from_mntr_item.TargetO == vif.data_out[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == vif.data_out[pckg_sz-17:pckg_sz-17]) & (from_mntr_item.payloadO == vif.data_out[pckg_sz-18:0])) begin
+					pickup = vif.data_out[from_mntr_item.dvc];
+					if ((from_mntr_item.TargetO == pickup[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == pickup[pckg_sz-17]) & (from_mntr_item.payloadO == pickup[pckg_sz-18:0])) begin
 						// Busco la transacción en la lista de transacciones generadas por el aGENt
 						foreach(sb_generadas[i]) begin
 							if (from_mntr_item.TargetO == dir[i]) begin
@@ -396,7 +389,7 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 											j = -2;
 										end else j = j-1;
 									end
-									if (j = -1) begin
+									if (j == -1) begin
 										$display("[T = %g] [Checker] ERROR: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
 										sb_rec_inc.push_front(from_mntr_item); 
 									end
@@ -429,4 +422,4 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		end
 	endtask : run
 
-endclass : checker 
+endclass : Checker 

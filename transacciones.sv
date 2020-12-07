@@ -170,7 +170,7 @@ typedef mailbox #(Trans_in)mlbx_aGENte_drv;                  //MAILBOX GENERADOR
 
 typedef mailbox #(Trans_in)mlbx_drv_disp;                  //MAILBOX DRIVER-DISPOSITIVO
 
-typedef mailbox #(Trans_in)mlbx_aGENte_chckr;                //MAILBOX GENERADOR_AGENTE-CHECKER
+typedef mailbox #(Trans_in)mlbx_aGENte_sb;                //MAILBOX GENERADOR_AGENTE-CHECKER
 
 typedef mailbox #(Trans_out)mlbx_mntr_chckr;               //MAILBOX MONITOR-CHECKER
 

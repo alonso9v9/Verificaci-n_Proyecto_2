@@ -14,6 +14,8 @@
 `include "disp.sv"
 `include "driver.sv"
 `include "monitor.sv"
+`include "checker.sv"
+`include "scoreboard.sv"
 `include "ambiente.sv"
 `include "Top.sv"
 `include "Rand_Parameters.sv"
@@ -33,12 +35,33 @@ module test_bench;
 
   intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
 
+  intfz #(.pckg_sz(pckg_sz))emu_if (.clk(clk));
+
   always #5 clk=~clk;
 
   mesh_gnrtr #(.ROWS(ROWS),.COLUMS(COLUMS),.pckg_sz(pckg_sz),.fifo_depth(fifo_depth),.bdcst(bdcst)) uut 
   (.pndng(_if.pndng),.data_out(_if.data_out), .popin(_if.popin),.pop(_if.pop),
   	.data_out_i_in(_if.data_out_i_in),.pndng_i_in(_if.pndng_i_in),.clk(_if.clk),.reset(_if.reset));
 
+  // Instancia del emulador del mesh
+  /*
+  mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
+   .clk          (emu_if.clk),
+   .rst          (emu_if.reset),
+   .pndng        (emu_if.pndng),
+   .data_out     (emu_if.data_out),
+   .popin        (emu_if.popin),
+   .pop          (emu_if.pop),
+   .data_out_i_in(emu_if.data_out_i_in),
+   .pndng_i_in   (emu_if.pndng_i_in)
+  );
+  */
+  assign emu_if.reset = _if.reset;
+  assign emu_if.data_out_i_in = _if.data_out_i_in;
+  assign emu_if.pndng_i_in = _if.pndng_i_in;
+  assign emu_if.pop = _if.pop;
+  
+  
   Top #(.pckg_sz(pckg_sz),.disps(16), .fifo_depth(fifo_depth)) inst_top;
   
   initial begin
