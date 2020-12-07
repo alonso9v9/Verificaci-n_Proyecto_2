@@ -315,12 +315,12 @@ endmodule
 class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
 	mlbx_mntr_chckr from_mntr_mlbx; 	// Monitor - Checker
-	mlbx_aGENte_sb from_sb_mlbx; 		// Scoreboard - checker
+	mlbx_drv_disp from_drvr_mlbx; 		// Driver - checker
 	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
 
 	// Transacciones
 	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 	// Del monitor
-	Trans_in #(.pckg_sz(pckg_sz)) from_sb_item;  	// Del scoreboard
+	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item;  	// Del scoreboard
 	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 		// Hacia el scoreboard
 
 	// Interfaz virtual para conectar el emulador del mesh al driver
@@ -352,11 +352,11 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 			begin
 				$display("[T = %g] El checker fue inicializado.", $time);
 				forever begin
-					from_sb_mlbx.get(from_sb_item);
-					from_sb_item.print("[Checker] Transacción recibida del Scoreboard.");
+					from_drvr_mlbx.get(from_drvr_item);
+					from_drvr_item.print("[Checker] Transacción recibida del Driver.");
 					foreach(dir[i]) begin
-						if (dir[i] == from_sb_item.Target) begin
-							sb_generadas[i].push_front(from_sb_item);
+						if (dir[i] == from_drvr_item.Target) begin
+							sb_generadas[i].push_front(from_drvr_item);
 						end
 					end
 				end
@@ -368,7 +368,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 					
 					// Recibo del monitor y reviso que sea consistente con el modelo del mesh
 					pickup = vif.data_out[from_mntr_item.dvc];
-					if ((from_mntr_item.TargetO == pickup[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == pickup[pckg_sz-17]) & (from_mntr_item.payloadO == pickup[pckg_sz-18:0])) begin
+					//if ((from_mntr_item.TargetO == pickup[pckg_sz-9:pckg_sz-16]) & (from_mntr_item.modeO == pickup[pckg_sz-17]) & (from_mntr_item.payloadO == pickup[pckg_sz-18:0])) begin
 						// Busco la transacción en la lista de transacciones generadas por el aGENt
 						foreach(sb_generadas[i]) begin
 							if (from_mntr_item.TargetO == dir[i]) begin
@@ -399,9 +399,9 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 								end
 							end
 						end
-					end else begin 
-						$display("[T = %g] [Checker] ERROR: La transacción recibida no coincide con el modelo", $time);
-					end
+					//end else begin 
+						//$display("[T = %g] [Checker] ERROR: La transacción recibida no coincide con el modelo", $time);
+					//end
 				end
 			end
 		join_none

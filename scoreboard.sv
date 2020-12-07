@@ -1,7 +1,7 @@
 class scoreboard #(parameter pckg_sz);
 	// Mailboxes
 	mlbx_aGENte_sb from_agnt_mlbx; 		// Agente - scoreboard
-	mlbx_aGENte_sb to_chckr_mlbx; 		// Scoreboard - checker
+	
 	mlbx_mntr_chckr from_chckr_mlbx; 	// Checker - scoreboard
 
 	Trans_in #(.pckg_sz(pckg_sz)) from_agnt_item;  // Item del agente
@@ -44,11 +44,9 @@ class scoreboard #(parameter pckg_sz);
 			from_agnt_mlbx.get(from_agnt_item);
 			// Se guarda el item recibido del generador en la lista correspondiente al destino del item
 			from_agnt_item.print("[Scoreboard] Transacción recibida del Generador.");
-
 			foreach(dir[i]) begin
 				if (dir[i] == from_agnt_item.Target) begin
 					sb_generadas[i].push_front(from_agnt_item);
-					to_chckr_mlbx.put(from_agnt_item);
 				end
 			end
 		end
