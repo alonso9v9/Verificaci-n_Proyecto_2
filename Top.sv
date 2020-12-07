@@ -23,9 +23,8 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
  
   tipos_pruebas tipo_prueba;
   mlbx_top_aGENte top_aGENte_mbx;
-  tipos_llenado tipo_llenado;
-  
-  bit dir;
+  tipos_llenado tipo_llenado;  
+ 
   parameter py_size=pckg_sz-17;
 
   
@@ -34,6 +33,7 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   inst_amb       = new(); //creo la instancia del ambiente
   inst_amb.top_aGENte_mbx = top_aGENte_mbx;  //igualo los mailboxes
   inst_amb.aGen_inst.mlbx_top_aGENte0 = top_aGENte_mbx;  //igualo los mailboxes
+
    // inst_amb.aGen_inst.tipo_llenado=tipo_llenado;
     
   endfunction
@@ -41,13 +41,14 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   task run();
     inst_amb._if   = _if;    //igualo la interfaz virtual
     $display("[T=%0t] [Test] El test fue inicializado", $time);
+     inst_amb.aGen_inst.item=new;
     fork
        inst_amb.run(); 
     join_none
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //         AQUI SE SETTEA EL NUMERO DE PRUEBA QUE SE DESEA CORRER EN EL TEST           //
-                           tipo_prueba    =    esc1_pru2;
+                           tipo_prueba    =    esc1_pru1;
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
     
@@ -55,10 +56,12 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         esc1_pru1:
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
-            inst_amb.aGen_inst.iter=3; 
-          for(int i=0; i<disps; i++)
-            inst_amb.disp_inst[i].on_off_fifodepth=1'b0;
-           
+            inst_amb.aGen_inst.iter=10; 
+          inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);  //Se apaga el constraint de mensajes con errores
+          inst_amb.aGen_inst.item.limittar.constraint_mode(1);    //Se enciende el constraint de mensajes sin errores        
+          for(int i=0; i<disps; i++)begin
+            inst_amb.disp_inst[i].on_off_fifodepth=1'b0;            //Para poner la profundidad de los Fifos infinita
+            end
         end
     
         esc1_pru2:
@@ -66,6 +69,11 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_pld_espec;
             inst_amb.aGen_inst.iter=8; 
+            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);  //Se apaga el constraint de mensajes con errores
+            inst_amb.aGen_inst.item.limittar.constraint_mode(1);    //Se enciende el constraint de mensajes sin errores     
+            for(int i=0; i<disps; i++)begin
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;            //Para poner la profundidad de los Fifos infinita
+              end          
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
                 item_top=new;
@@ -90,6 +98,11 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_dtny_espec;
             inst_amb.aGen_inst.iter=32; 
+            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);  //Se apaga el constraint de mensajes con errores
+            inst_amb.aGen_inst.item.limittar.constraint_mode(1);    //Se enciende el constraint de mensajes sin errores           
+            for(int i=0; i<disps; i++)begin
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;            //Para poner la profundidad de los Fifos infinita
+              end          
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
                 item_top=new;
@@ -145,29 +158,34 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
                 top_aGENte_mbx.put(item_top) ;
               end
         end
+      
+      
+      esc1_pru4:                                                    //Prueba con Fifos de profundidad finita aleatoria
+        begin
+            inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
+            inst_amb.aGen_inst.iter=10; 
+            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);  //Se apaga el constraint de mensajes con errores
+            inst_amb.aGen_inst.item.limittar.constraint_mode(1);    //Se enciende el constraint de mensajes sin errores     
+          for(int i=0; i<disps; i++)begin
+            inst_amb.disp_inst[i].on_off_fifodepth=1'b1;            //Para poner la profundidad de los Fifos finita y aleatoria
+            end          
+        end
        
         esc2_pru1: 
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
-            inst_amb.aGen_inst.iter=3;
+            inst_amb.aGen_inst.iter=8;
+          $display("[T=%0t] Corriendo Escenario 2 prueba 1",$time);
             inst_amb.aGen_inst.item=new;
-        //    inst_amb.aGen_inst.item.direc.constraint_mode(1);
-            inst_amb.aGen_inst.item.limittar.constraint_mode(0);
+            inst_amb.aGen_inst.item.dtny_error.constraint_mode(1);   //Se enciende el constraint para generar direcciones falsas
+            inst_amb.aGen_inst.item.limittar.constraint_mode(0);     //Se apaga el constraint para generar direcciones verdaderas        
             for(int i=0; i<disps; i++)
-              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;
-           
-          
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;           //Para poner la profundiodad de las Fifos infinita
         end
-      /*
-        esc2_pru1:
-        begin
-        end
-        esc2_pru2:
-        begin
-        end
-        esc2_pru3:
-        begin
-        end*/
+      
+
+        
+        
     endcase
 
   endtask
