@@ -20,7 +20,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
     // Para enviar las transacciones ejecutadas al checker
     // Primero van al driver y de ahí al chekcer
     mlbx_drv_disp disp_chckr_mbx;
-    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
+    // Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
 
     bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
     int espera;
@@ -60,7 +60,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 					vif.reset=0;
 					espera = 0;
 
-					to_chckr = new();
+					// to_chckr = new();
 
 		      		//@(posedge vif.clk);
 		      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion.",$time,id);				
@@ -88,8 +88,8 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 							transaction.tiempo = $time;
 			     			transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
 			     			// Envío al checker
-			     			to_chckr = transaction;
-			     			disp_chckr_mbx.put(to_chckr);
+			     			// to_chckr = transaction;
+			     			disp_chckr_mbx.put(transaction);
 						end
 
 						reset:begin
@@ -97,8 +97,8 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 							transaction.tiempo = $time;
 							transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
 							// Envío al checker
-							to_chckr = transaction;
-			     			disp_chckr_mbx.put(to_chckr);
+							// to_chckr = transaction;
+			     			disp_chckr_mbx.put(transaction);
 						end
 
 						default:begin

@@ -385,18 +385,18 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 											to_sb_item.delayO = from_mntr_item.delayO - sb_generadas[i][j].tiempo;
 											// Se envía la transacción completada al sb								
 											to_sb_mlbx.put(to_sb_item);
-											$display("[T = %g] [Checker] Transacción correcta.",$time);
+											$display("[T=%g] [Checker] Transacción correcta.",$time);
 											// Saca la transacción de la lista de generadas
 											sb_generadas[i].pop_back();
 											j = -2;
 										end else j = j-1;
 									end
 									if (j == -1) begin
-										$display("[T = %g] [Checker] ERROR: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
+										$display("[T=%g] [Checker] [ERROR]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
 										sb_rec_inc.push_front(from_mntr_item); 
 									end
 								end else begin
-									$display("[T = %g] [Checker] ERROR: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
+									$display("[T=%g] [Checker] [ERROR]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
 									sb_rec_inc.push_front(from_mntr_item); 
 								end
 							end
@@ -411,16 +411,16 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		// Se verifica que todas las transacciones se hayan completado
 		foreach(sb_generadas[i]) begin
 			if (sb_generadas[i].size()) begin
-				$display("[T=%g] [Checker] ERROR: %g transacciones no llegaron al dispositivo %g.", $time, sb_generadas[i].size(), i);
+				$display("[T=%g] [Checker] [ERROR]: %g transacciones no llegaron al dispositivo %g.", $time, sb_generadas[i].size(), i);
 			end else begin 
-				$display("[T=%g] [Checker] PASS: Todas las transacciones generadas se recibieron con éxito en el dispositivo %g", $time, i);
+				$display("[T=%g] [Checker] [PASS]: Todas las transacciones generadas se recibieron con éxito en el dispositivo %g", $time, i);
 			end
 		end
 		// Se verifica si se recibieron transacciones incorrectas
 		if (sb_rec_inc.size()) begin
-			$display("[T=%g] [Checker] ERROR: Se recibieron %g transacciones incorrectas en el monitor.", $time, sb_rec_inc.size());
+			$display("[T=%g] [Checker] [ERROR]: Se recibieron %g transacciones incorrectas en el monitor.", $time, sb_rec_inc.size());
 		end else begin 
-			$display("[T=%g] [Checker] PASS: No se recibieron transaccione incorrectas en el monitor.", $time);
+			$display("[T=%g] [Checker] [PASS]: No se recibieron transaccione incorrectas en el monitor.", $time);
 		end
 	endtask : run
 

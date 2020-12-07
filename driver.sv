@@ -20,7 +20,7 @@ class driver #(parameter pckg_sz=40,parameter disps=16,parameter Fif_Size=10);
     mlbx_aGENte_drv drvr_chckr_mbx0;
     mlbx_drv_disp disp_drv_mbx [disps];
 
-    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
+    Trans_in #(.pckg_sz(pckg_sz)) to_chckr = new();
       //Se define un item
 
     int espera;   
@@ -78,9 +78,8 @@ class driver #(parameter pckg_sz=40,parameter disps=16,parameter Fif_Size=10);
 		foreach(disp_drv_mbx[i]) begin
 			automatic int auto_i = i;
 			fork
-				disp_drv_mbx[i] = new();
 				forever begin
-					disp_drv_mbx[i].get(to_chckr);
+					disp_drv_mbx[auto_i].get(to_chckr);
 					drvr_chckr_mbx0.put(to_chckr);
 				end
 			join_none
