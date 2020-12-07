@@ -26,7 +26,7 @@ class scoreboard;
 
 	endfunction
 
-	task run();
+	task run(event fin, event sb_done);
 		$display("[T = %g] El scoreboard fue inicializado.",$time);
 		fork
 			run_sb_gen;

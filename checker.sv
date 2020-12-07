@@ -393,7 +393,7 @@ class checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 											$display("[T = %g] [Checker] Transacción correcta.",$time);
 											// Saca la transacción de la lista de generadas
 											sb_generadas[i].pop_back();
-											j = 0;
+											j = -2;
 										end else j = j-1;
 									end
 									if (j = -1) begin
