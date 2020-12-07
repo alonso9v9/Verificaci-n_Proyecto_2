@@ -27,6 +27,7 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado aleatorio", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
+               item=new();
                item.randomize();//generamos los valores aleatorios
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     
@@ -43,6 +44,7 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
+                item=new();
                 item.randomize();//generamos los valores aleatorios       
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
@@ -59,7 +61,7 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
-                item = new;//creamos una nueva transacción
+                item=new();//creamos una nueva transacción
                 item.randomize();//generamos los valores aleatorios        
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
