@@ -334,7 +334,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	Trans_out sb_rec_inc [$]; 	   	// Este queue guardará las transacciones recibidas en el monitor que no se generaron por el test
 
 	// Direcciones de los paquetes
-	bit [7:0] dir [15:0] ={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
+	bit [7:0] dir ={8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
 
 	bit [pckg_sz-1:0] pickup;
 
@@ -362,7 +362,8 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 					automatic int auto_i = i;
 					fork
 						forever begin
-							from_drvr_item=new();
+							from_drvr_item=new();	
+							$display("%g %g",auto_i,i);
 							from_drvr_mlbx[auto_i].get(from_drvr_item);
 							from_drvr_item.print("[Checker] Transacción recibida del Driver");
 							foreach(dir[j]) begin
