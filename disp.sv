@@ -97,7 +97,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 			     			to_chckr.tiempo = $time;
 			     			to_chckr.tipo = transaction.tipo;
 			     			to_chckr.print("[Dispositivo] Transaccion al checker.");
-			     			disp_chckr_mbx.put(to_chckr);
+			     			this.disp_chckr_mbx.put(to_chckr);
 						end
 
 						reset:begin
@@ -106,7 +106,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 							transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
 							// Envío al checker
 							// to_chckr = transaction;
-			     			disp_chckr_mbx.put(transaction);
+			     			this.disp_chckr_mbx.put(transaction);
 						end
 
 						default:begin
