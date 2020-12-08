@@ -5,3 +5,5 @@ work/_lib1_4.qpg
 work/_lib1_4.qdb
 work/_lib.qdb
 work/_info
+*.qpg
+*.qdb
