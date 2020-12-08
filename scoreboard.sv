@@ -16,6 +16,15 @@ class scoreboard #(parameter pckg_sz);
 
 	bit [7:0] dir [15:0] = {8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};
 	// {{8'b00000001}, {8'b00000010}, {8'b00000011}, {8'b00000100}, {8'b00010000}, {8'b00100000}, {8'b00110000}, {8'b01000000}, {8'b01010001}, {8'b01010010}, {8'b01010011}, {8'b01010100}, {8'b00010101}, {8'b00100101}, {8'b00110101}, {8'b01000101}};
+	
+	string d_env;
+	string destino;
+	string origen;
+	string t_envio;
+	string t_recib;
+    string lat;
+    string linea_csv;
+
 	function new ();
 
 		foreach(sb_generadas[i]) begin
@@ -67,7 +76,20 @@ class scoreboard #(parameter pckg_sz);
 
 			// Se guarda la transacción completada en sb_completadas
 			sb_completadas.push_front(from_chckr_item);
+			newRowOut(from_chckr_item);
 
 		end
 	endtask : run_sb_chckr
+
+	function void newRowOut(const ref Trans_out from_chckr_item);
+	    d_env.hextoa(from_chckr_item.payloadO);
+	    destino.itoa(from_chckr_item.dvc);
+	    origen.itoa(from_chckr_item.Origen);
+	    t_envio.itoa(from_chckr_item.tiempo_envio);
+	    t_recib.itoa(from_chckr_item.delayO);
+        lat.itoa(from_chckr_item.latencia);
+        linea_csv = {d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
+        $system($sformatf("echo %0s, %0s >> output.csv",linea_csv,from_chckr_item.tipo));
+    endfunction
+
 endclass : scoreboard
