@@ -45,7 +45,7 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //         AQUI SE SETTEA EL NUMERO DE PRUEBA QUE SE DESEA CORRER EN EL TEST           //
-                           tipo_prueba    =    esc2_pru1;
+                           tipo_prueba    =    esc1_pru1;
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
     

@@ -98,9 +98,10 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     end
     foreach(disp_chckr_mbx[i]) begin
       disp_inst[i].disp_chckr_mbx = disp_chckr_mbx[i];
+    end      
+    foreach(chckr_inst.from_drvr_mlbx[i]) begin
       chckr_inst.from_drvr_mlbx[i] = disp_chckr_mbx[i];
     end      
-
   endfunction
 
   virtual task run(event fin, event sb_done);
