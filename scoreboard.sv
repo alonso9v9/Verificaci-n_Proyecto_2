@@ -27,8 +27,6 @@ class scoreboard #(parameter pckg_sz);
 	endfunction
 
 	task run(event fin, event sb_done);
-		from_agnt_mlbx = new();
-		from_chckr_mlbx = new();
 
 		$display("[T=%g] El scoreboard fue inicializado.",$time);
 		fork

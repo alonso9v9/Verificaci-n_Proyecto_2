@@ -60,8 +60,11 @@ class monitor #(parameter pckg_sz=40);
 
 	Trans_out #(.pckg_sz(pckg_sz)) item;
 
-	task run();
+	// Para sincronizar la comunicacion con el checker
+	// semaphore sem;
 
+	task run();
+		// sem = new(1);
 		$display("[T=%g] El monitor fue inicializado.", $time);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;

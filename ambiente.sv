@@ -35,8 +35,7 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
   // Declaración de los mailboxes
   mlbx_aGENte_drv     aGENte_drv_mbx;         // Mailbox del agente al driver
   mlbx_drv_disp  drv_disp_mbx[disps];         // Mailbox del controlador del driver a los dispositivos
-  mlbx_drv_disp disp_chckr_mbx[disps];        // Mailbox de los disp al driver para luego enviar al checker
-  mlbx_drv_disp drvr_chckr_mbx;               // Mailbox del driver al checker
+  mlbx_drv_disp disp_chckr_mbx[disps];        // Mailbox de los disp al checker
   mlbx_aGENte_sb aGENte_sb_mbx;               // Mailbox del agente al scoreboard
   mlbx_top_aGENte     top_aGENte_mbx;         // Mailbox del test (Top) al agente
   mlbx_mntr_chckr chckr_mntr_mbx;             // Mailbox del monitor al checker
@@ -49,7 +48,6 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     top_aGENte_mbx  = new();
     chckr_sb_mbx    = new();
     chckr_mntr_mbx  = new();
-    drvr_chckr_mbx  = new();
 
     foreach(disp_chckr_mbx[i]) begin
       disp_chckr_mbx[i] = new();
@@ -92,18 +90,16 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
 
     monitor_inst.to_chckr_mlbx_p= chckr_mntr_mbx;
 
-    chckr_inst.from_drvr_mlbx   = drvr_chckr_mbx;
-
-    driver_inst.drvr_chckr_mbx0 = drvr_chckr_mbx;
-
     foreach(driver_inst.drv_disp_mbx[i]) begin
       driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
-      driver_inst.disp_drv_mbx[i]=disp_chckr_mbx[i];
     end
     foreach(drv_disp_mbx[i]) begin
       disp_inst[i].drv_disp_mbx = drv_disp_mbx[i];
-      disp_inst[i].disp_chckr_mbx = disp_chckr_mbx[i];
     end
+    foreach(disp_chckr_mbx[i]) begin
+      disp_inst[i].disp_chckr_mbx = disp_chckr_mbx[i];
+      chckr_inst.from_drvr_mlbx[i] = disp_chckr_mbx[i];
+    end      
 
   endfunction
 
@@ -124,7 +120,7 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
       aGen_inst.run();
       sb_inst.run(fin, sb_done);
       chckr_inst.run(fin);
-      driver_inst.drvr_chckr_com();
+      // driver_inst.drvr_chckr_com();
       foreach (disp_inst[i]) begin
         automatic int var_i = i;
         fork

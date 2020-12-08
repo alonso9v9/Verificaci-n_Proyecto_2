@@ -315,13 +315,13 @@ endmodule
 class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
 	mlbx_mntr_chckr from_mntr_mlbx = new(); 	// Monitor - Checker
-	mlbx_drv_disp from_drvr_mlbx = new(); 		// Driver - checker
-	mlbx_mntr_chckr to_sb_mlbx; 		// Checker - scoreboard
+	mlbx_drv_disp from_drvr_mlbx [15:0]; 		// Driver - checker
+	mlbx_mntr_chckr to_sb_mlbx; 				// Checker - scoreboard
 
 	// Transacciones
-	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 	// Del monitor
-	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item;  	// Del scoreboard
-	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 		// Hacia el scoreboard
+	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 			// Del monitor
+	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item [15:0];  	// Del scoreboard
+	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 				// Hacia el scoreboard
 
 	// Interfaz virtual para conectar el emulador del mesh al driver
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
@@ -345,23 +345,37 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		end
 
 		this.sb_rec_inc = {};
+
+		foreach(from_drvr_mlbx[i]) begin
+			from_drvr_mlbx[i] = new();
+			from_drvr_item[i] = new();
+		end
+
 	endfunction
 
 	task run(event fin);
 
 		fork
+			// Recepcion de transacciones del driver
 			begin
 				$display("[T=%g] El checker fue inicializado.", $time);
-				forever begin
-					from_drvr_mlbx.get(from_drvr_item);
-					from_drvr_item.print("[Checker] Transacción recibida del Driver.");
-					foreach(dir[i]) begin
-						if (dir[i] == from_drvr_item.Target) begin
-							sb_generadas[i].push_front(from_drvr_item);
+				foreach(from_drvr_mlbx[i]) begin
+					automatic int auto_i = i;
+					fork
+						forever begin
+							from_drvr_mlbx[auto_i].get(from_drvr_item[auto_i]);
+							from_drvr_item[auto_i].print("[Checker] Transacción recibida del Driver");
+							foreach(dir[j]) begin
+								if (dir[j] == from_drvr_item[auto_i].Target) begin
+									sb_generadas[j].push_front(from_drvr_item[auto_i]);
+									$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
+								end
+							end
 						end
-					end
+					join_none
 				end
 			end
+			// Recepcion de transacciones del monitor y chequeo
 			begin
 				$display("[T=%g] [Checker] Esperando mbx",$time);
 				forever begin
@@ -392,11 +406,11 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 										end else j = j-1;
 									end
 									if (j == -1) begin
-										$display("[T=%g] [Checker] [ERROR]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
+										$display("[T=%g] [Checker] [ERROR:01]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
 										sb_rec_inc.push_front(from_mntr_item); 
 									end
 								end else begin
-									$display("[T=%g] [Checker] [ERROR]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
+									$display("[T=%g] [Checker] [ERROR:02]: Se recibió una transacción no generada por el test para el dispositivo %g", $time, i);
 									sb_rec_inc.push_front(from_mntr_item); 
 								end
 							end
