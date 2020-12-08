@@ -13,7 +13,7 @@
 
 
 class read_dvc #(parameter pckg_sz=40);
-	mlbx_mntr_chckr to_chckr_mlbx;
+	mlbx_mntr_chckr to_mntr_mlbx;
 	Trans_out #(.pckg_sz(pckg_sz)) to_chckr;
 	virtual intfz #(.pckg_sz(pckg_sz)) vif;
 	int tag = 0;
@@ -42,7 +42,7 @@ class read_dvc #(parameter pckg_sz=40);
 				end
 				to_chckr.delayO=$time;
 				to_chckr.dvc = tag;
-				to_chckr_mlbx.put(to_chckr);
+				to_mntr_mlbx.put(to_chckr);
 				to_chckr.print("[Monitor] Tansaccion leida");
 				@(posedge vif.clk);
 					vif.pop[tag] = 0;
@@ -56,35 +56,21 @@ class monitor #(parameter pckg_sz=40);
 	virtual intfz #(.pckg_sz(pckg_sz)) vif; // Interfaz virtual
 	mlbx_mntr_chckr to_chckr_mlbx_p; 		// Mailboxe hacia el checker
 	mlbx_mntr_chckr mlbx_dvc[16];			// Mailboxes para cada dispositivo
-	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
-
 	Trans_out #(.pckg_sz(pckg_sz)) item;
 
 	// Para sincronizar la comunicacion con el checker
 	// semaphore sem;
 
 	task run();
-		// sem = new(1);
 		$display("[T=%g] El monitor fue inicializado.", $time);
-		foreach(dvcs[i]) begin
-			automatic int auto_i = i;
-			mlbx_dvc[auto_i] = new();
-			dvcs[auto_i] = new();
-			fork
-				begin
-					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
-					dvcs[auto_i].vif = vif;
-					dvcs[auto_i].run();
-				end
-			join_none
-		end
+
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
 				forever begin 
 					item = new();
 					mlbx_dvc[auto_i].get(item);
+					$display("[Monitor] Monitor recibio transaccion del dispositivo OUT:%g",auto_i);
 					to_chckr_mlbx_p.put(item);
 					item.print("[Monitor] Transaccion enviada al checker");
 				end

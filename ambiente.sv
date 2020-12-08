@@ -21,6 +21,7 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
   // Módulos del ambiente
   driver #(.pckg_sz(pckg_sz),.disps(disps),.Fif_Size(fifo_depth)) driver_inst;
   disp #(.pckg_sz(pckg_sz),.Fif_Size(fifo_depth)) disp_inst [disps];
+  read_dvc #(.pckg_sz(pckg_sz)) dvcs [disps];
   monitor #(.pckg_sz(pckg_sz)) monitor_inst;
   Generador_Agent #(.pckg_sz(pckg_sz)) aGen_inst;
   Checker #(.ROWS(4), .COLUMS(4), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) chckr_inst;
@@ -33,11 +34,15 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
   virtual intfz #(.pckg_sz(pckg_sz)) emu_if;
 
   // Declaración de los mailboxes
-  mlbx_aGENte_drv     aGENte_drv_mbx;         // Mailbox del agente al driver
+  
+  mlbx_top_aGENte  top_aGENte_mbx; 
+  mlbx_aGENte_sb aGENte_sb_mbx;            // Mailbox del agente al scoreboard
+  mlbx_aGENte_drv  aGENte_drv_mbx;         // Mailbox del agente al driver
+  
   mlbx_drv_disp  drv_disp_mbx[disps];         // Mailbox del controlador del driver a los dispositivos
   mlbx_drv_disp disp_chckr_mbx[disps];        // Mailbox de los disp al checker
-  mlbx_aGENte_sb aGENte_sb_mbx;               // Mailbox del agente al scoreboard
-  mlbx_top_aGENte     top_aGENte_mbx;         // Mailbox del test (Top) al agente
+             
+  mlbx_mntr_chckr dvc_mntr_mbx[disps];        
   mlbx_mntr_chckr chckr_mntr_mbx;             // Mailbox del monitor al checker
   mlbx_mntr_chckr chckr_sb_mbx;               // Mailbox del checker al scoreboard 
 
@@ -57,6 +62,10 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
       drv_disp_mbx[i] = new();
     end
 
+    foreach(dvc_mntr_mbx[i]) begin
+      dvc_mntr_mbx[i] = new();
+    end
+
 
     // instanciación de los componentes del ambiente
     driver_inst         = new();
@@ -69,26 +78,39 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
       disp_inst [i]=new();
     end
 
+    foreach(dvcs [i]) begin
+      dvcs [i]=new()
+    end
+
 
     // conexion de las interfaces y mailboxes en el ambiente
 
     driver_inst.aGENte_drv_mbx0 = aGENte_drv_mbx;
 
     aGen_inst.mlbx_aGENte_drv0  = aGENte_drv_mbx;
+    ////
     
     aGen_inst.mlbx_top_aGENte0  = top_aGENte_mbx;
+
+    ////
 
     aGen_inst.mlbx_aGENte_sb0   = aGENte_sb_mbx;
 
     sb_inst.from_agnt_mlbx      = aGENte_sb_mbx;
 
+    ////
+
     sb_inst.from_chckr_mlbx     = chckr_sb_mbx;
 
     chckr_inst.to_sb_mlbx       = chckr_sb_mbx;
 
+    ////
+
     chckr_inst.from_mntr_mlbx   = chckr_mntr_mbx;
 
     monitor_inst.to_chckr_mlbx_p= chckr_mntr_mbx;
+
+    ////
 
     foreach(driver_inst.drv_disp_mbx[i]) begin
       driver_inst.drv_disp_mbx[i]=drv_disp_mbx[i];
@@ -96,13 +118,29 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     foreach(drv_disp_mbx[i]) begin
       disp_inst[i].drv_disp_mbx = drv_disp_mbx[i];
     end
+
+    ////
+
     foreach(disp_chckr_mbx[i]) begin
       disp_inst[i].disp_chckr_mbx = disp_chckr_mbx[i];
     end      
     foreach(chckr_inst.from_drvr_mlbx[i]) begin
       chckr_inst.from_drvr_mlbx[i] = disp_chckr_mbx[i];
+    end 
+
+    ////
+
+    foreach(dvc_mntr_mbx[i]) begin
+       = dvc_mntr_mbx[i];
     end      
+    foreach(chckr_inst.from_drvr_mlbx[i]) begin
+      chckr_inst.from_drvr_mlbx[i] = dvc_mntr_mbx[i];
+    end 
+
   endfunction
+
+
+
 
   virtual task run(event fin, event sb_done);
 
@@ -110,7 +148,9 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     foreach(disp_inst[i]) begin
       disp_inst[i].vif = _if;
     end
-
+    foreach(dvcs[i]) begin
+      dvcs[i].vif = _if;
+    end
     chckr_inst.vif = emu_if;
 
     monitor_inst.vif =_if;
@@ -127,8 +167,17 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
         fork
             disp_inst[var_i].id=var_i;
             disp_inst[var_i].run();
+
         join_none 
       end
+      foreach (dvcs[i]) begin
+        automatic int var_i = i;
+        fork
+            dvcs[var_i].tag=var_i;
+            dvcs[var_i].run();
+        join_none 
+      end
+
 
     join_none
   endtask 
