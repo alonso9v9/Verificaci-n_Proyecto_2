@@ -364,12 +364,12 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 						
 							from_drvr_item[auto_i].print("[Checker] Transacción recibida del Driver");
 							foreach(dir[j]) begin
-								if (dir[j] == from_drvr_item.Target) begin
-									sb_generadas[j].push_front(from_drvr_item);
+								if (dir[j] == from_drvr_item[auto_i].Target) begin
+									sb_generadas[j].push_front(from_drvr_item[auto_i]);
 									$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
 								end
 							end
-							
+						end 	
 					join_none
 				end
 			end
