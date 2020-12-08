@@ -29,6 +29,7 @@ class scoreboard #(parameter pckg_sz);
 	task run(event fin, event sb_done);
 
 		$display("[T=%g] El scoreboard fue inicializado.",$time);
+		 $system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
 		fork
 			run_sb_gen;
 			run_sb_chckr;
