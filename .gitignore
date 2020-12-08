@@ -7,3 +7,4 @@ work/_lib.qdb
 work/_info
 *.qpg
 *.qdb
+work/_opt__lock

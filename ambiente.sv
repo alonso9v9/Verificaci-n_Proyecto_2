@@ -133,8 +133,8 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     foreach(dvc_mntr_mbx[i]) begin
        dvcs[i].to_mntr_mlbx= dvc_mntr_mbx[i];
     end      
-    foreach(chckr_inst.from_drvr_mlbx[i]) begin
-      chckr_inst.from_drvr_mlbx[i] = dvc_mntr_mbx[i];
+    foreach(monitor_inst.mlbx_dvc[i]) begin
+       monitor_inst.mlbx_dvc[i]= dvc_mntr_mbx[i];
     end 
 
   endfunction
