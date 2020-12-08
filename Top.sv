@@ -8,9 +8,6 @@
 // Este script esta estructurado en System Verilog
 
 
-
-
-
 class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
    
   ambiente #(.pckg_sz(pckg_sz),.disps(16),.fifo_depth(fifo_depth)) inst_amb;  //Definicion del ambiente de la prueba.
@@ -41,14 +38,14 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   task run(event fin, event sb_done);
     inst_amb._if   = _if;    //igualo la interfaz virtual
     $display("[T=%0t] [Test] El test fue inicializado", $time);
-     inst_amb.aGen_inst.item=new;
+
     fork
        inst_amb.run(fin, sb_done); 
     join_none
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //         AQUI SE SETTEA EL NUMERO DE PRUEBA QUE SE DESEA CORRER EN EL TEST           //
-                           tipo_prueba    =    esc1_pru1;
+                           tipo_prueba    =    esc2_pru2;
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
     
@@ -57,10 +54,8 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
             inst_amb.aGen_inst.iter=10; 
-            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);      //Se apaga el constraint de mensajes con errores
-            inst_amb.aGen_inst.item.limittar.constraint_mode(1);        //Se enciende el constraint de mensajes sin errores  
-            inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(1);   //Se enciende el constraint de origen != destino
-            inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(0);  //Se apaga el constraint de origen==destino                    
+            inst_amb.aGen_inst.posible_error = 0;                   //Para que no se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 0;                   //Para que el destino sea distinto al origen
           for(int i=0; i<disps; i++)begin
             inst_amb.disp_inst[i].on_off_fifodepth=1'b0;            //Para poner la profundidad de los Fifos infinita
             end
@@ -71,12 +66,10 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_pld_espec;
             inst_amb.aGen_inst.iter=8; 
-            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);       //Se apaga el constraint de mensajes con errores
-            inst_amb.aGen_inst.item.limittar.constraint_mode(1);         //Se enciende el constraint de mensajes sin errores  
-            inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(1);   //Se enciende el constraint de origen != destino
-            inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(0);  //Se apaga el constraint de origen==destino                   
+            inst_amb.aGen_inst.posible_error = 0;                   //Para que no se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 0;                   //Para que el destino sea distinto al origen                 
             for(int i=0; i<disps; i++)begin
-              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;               //Para poner la profundidad de los Fifos infinita
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;          //Para poner la profundidad de los Fifos infinita
               end          
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
@@ -102,12 +95,10 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_dtny_espec;
             inst_amb.aGen_inst.iter=32; 
-            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);       //Se apaga el constraint de mensajes con errores
-            inst_amb.aGen_inst.item.limittar.constraint_mode(1);         //Se enciende el constraint de mensajes sin errores   
-            inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(1);   //Se enciende el constraint de origen != destino
-            inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(0);  //Se apaga el constraint de origen==destino                        
+            inst_amb.aGen_inst.posible_error = 0;                   //Para que no se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 0;                   //Para que el destino sea distinto al origen                  
             for(int i=0; i<disps; i++)begin
-              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;               //Para poner la profundidad de los Fifos infinita
+              inst_amb.disp_inst[i].on_off_fifodepth=1'b0;          //Para poner la profundidad de los Fifos infinita
               end          
             for(int i=0; i<inst_amb.aGen_inst.iter;i++)
               begin
@@ -170,10 +161,8 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
             inst_amb.aGen_inst.iter=10; 
-            inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);  //Se apaga el constraint de mensajes con errores
-            inst_amb.aGen_inst.item.limittar.constraint_mode(1);    //Se enciende el constraint de mensajes sin errores  
-            inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(1);   //Se enciende el constraint de origen != destino
-            inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(0);  //Se apaga el constraint de origen==destino                   
+            inst_amb.aGen_inst.posible_error = 0;                   //Para que se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 0;                   //Para que el destino sea distinto al origen          
           for(int i=0; i<disps; i++)begin
             inst_amb.disp_inst[i].on_off_fifodepth=1'b1;            //Para poner la profundidad de los Fifos finita y aleatoria
             end          
@@ -184,23 +173,18 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
             inst_amb.aGen_inst.iter=8;
           $display("[T=%0t] Corriendo Escenario 2 prueba 1",$time);
-            inst_amb.aGen_inst.item=new;
-            inst_amb.aGen_inst.item.dtny_error.constraint_mode(1);   //Se enciende el constraint para generar direcciones falsas
-            inst_amb.aGen_inst.item.limittar.constraint_mode(0);     //Se apaga el constraint para generar direcciones verdaderas  
-            inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(1);   //Se enciende el constraint de origen != destino
-            inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(0);  //Se apaga el constraint de origen==destino                    
+            inst_amb.aGen_inst.posible_error = 1;                   //Para que se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 0;                   //Para que el destino sea distinto al origen          
             for(int i=0; i<disps; i++)
               inst_amb.disp_inst[i].on_off_fifodepth=1'b0;           //Para poner la profundiodad de las Fifos infinita
         end
 
-        esc1_pru1:
+        esc2_pru2:
         begin
             inst_amb.aGen_inst.tipo_llenado = llenado_aleat;
             inst_amb.aGen_inst.iter=10; 
-          inst_amb.aGen_inst.item.dtny_error.constraint_mode(0);       //Se apaga el constraint de mensajes con errores
-          inst_amb.aGen_inst.item.limittar.constraint_mode(1);         //Se enciende el constraint de mensajes sin errores
-          inst_amb.aGen_inst.item.orin_dist_dtny.constraint_mode(0);   //Se apaga el constraint de origen != destino
-          inst_amb.aGen_inst.item.orin_equal_dtny.constraint_mode(1);  //Se enciende el constraint de origen==destino                 
+            inst_amb.aGen_inst.posible_error = 0;                   //Para que no se envien mensajes con errores
+            inst_amb.aGen_inst.dstn_eq_orin  = 1;                   //Para que el destino sea igual al origen             
           for(int i=0; i<disps; i++)begin
             inst_amb.disp_inst[i].on_off_fifodepth=1'b0;            //Para poner la profundidad de los Fifos infinita
             end
