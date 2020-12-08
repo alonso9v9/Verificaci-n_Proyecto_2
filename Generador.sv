@@ -48,7 +48,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                 end else begin
                   item.orin_dist_dtny.constraint_mode(1);          //Se enciende el constraint destino != origen 
                   item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen  
-                  item.limitorin.constraint_mode(0);         //apago constraint                
+                  item.limitorin.constraint_mode(1);         //apago constraint                
                   $display("Dest != orin");
                 end                           
                item.randomize();//generamos los valores aleatorios
