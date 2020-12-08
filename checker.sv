@@ -315,12 +315,12 @@ endmodule
 class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, parameter fifo_depth = 4);
 	// Mailboxes
 	mlbx_mntr_chckr from_mntr_mlbx = new(); 	// Monitor - Checker
-	mlbx_drv_disp from_drvr_mlbx [15:0]; 		// Driver - checker
+	mlbx_drv_disp from_drvr_mlbx [16]; 		// Driver - checker
 	mlbx_mntr_chckr to_sb_mlbx; 				// Checker - scoreboard
 
 	// Transacciones
 	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 			// Del monitor
-	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item [15:0];  	// Del scoreboard
+	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item [16];  	// Del scoreboard
 	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 				// Hacia el scoreboard
 
 	// Interfaz virtual para conectar el emulador del mesh al driver
@@ -363,6 +363,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 					automatic int auto_i = i;
 					fork
 						forever begin
+							from_drvr_item[auto_i]=new();
 							from_drvr_mlbx[auto_i].get(from_drvr_item[auto_i]);
 							from_drvr_item[auto_i].print("[Checker] Transacción recibida del Driver");
 							foreach(dir[j]) begin
