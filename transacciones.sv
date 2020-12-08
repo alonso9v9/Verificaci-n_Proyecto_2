@@ -36,8 +36,8 @@ endinterface
 class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   rand  bit [pckg_sz-9:pckg_sz-16] Target; 
   //randc  bit [7:0] Origen; 
-  rand int Origen;
-  rand int Origen_alternativo;
+  rand   int Origen;
+  rand   int Origen_alternativo;
   rand   bit [pckg_sz-17:pckg_sz-17] mode;
   rand   bit [pckg_sz-18:0] payload;
   rand   int delay;
@@ -77,42 +77,42 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
 //Esto para que el origen no sea igual al destino
 
   constraint orin_dist_dtny {
-    if(Target == 8'b00000001 && Origen == 0  )Origen <=Origen_alternativo;
-    if(Target == 8'b00000010 && Origen == 1  )Origen <=Origen_alternativo;
-    if(Target == 8'b00000011 && Origen == 2  )Origen <=Origen_alternativo;
-    if(Target == 8'b00000100 && Origen == 3  )Origen <=Origen_alternativo;
-    if(Target == 8'b00010000 && Origen == 4  )Origen <=Origen_alternativo;
-    if(Target == 8'b00100000 && Origen == 5  )Origen <=Origen_alternativo;
-    if(Target == 8'b00110000 && Origen == 6  )Origen <=Origen_alternativo;
-    if(Target == 8'b01000000 && Origen == 7  )Origen <=Origen_alternativo;
-    if(Target == 8'b01010001 && Origen == 8  )Origen <=Origen_alternativo;
-    if(Target == 8'b01010010 && Origen == 9  )Origen <=Origen_alternativo;
-    if(Target == 8'b01010011 && Origen == 10 )Origen <=Origen_alternativo;
-    if(Target == 8'b01010100 && Origen == 11 )Origen <=Origen_alternativo;
-    if(Target == 8'b00010101 && Origen == 12 )Origen <=Origen_alternativo;
-    if(Target == 8'b00100101 && Origen == 13 )Origen <=Origen_alternativo;
-    if(Target == 8'b00110101 && Origen == 14 )Origen <=Origen_alternativo;
-    if(Target == 8'b01000101 && Origen == 15 )Origen <=Origen_alternativo;}
+    if(Target == 8'b00000001 && Origen == 0  )Origen ==Origen_alternativo;
+    if(Target == 8'b00000010 && Origen == 1  )Origen ==Origen_alternativo;
+    if(Target == 8'b00000011 && Origen == 2  )Origen ==Origen_alternativo;
+    if(Target == 8'b00000100 && Origen == 3  )Origen ==Origen_alternativo;
+    if(Target == 8'b00010000 && Origen == 4  )Origen ==Origen_alternativo;
+    if(Target == 8'b00100000 && Origen == 5  )Origen ==Origen_alternativo;
+    if(Target == 8'b00110000 && Origen == 6  )Origen ==Origen_alternativo;
+    if(Target == 8'b01000000 && Origen == 7  )Origen ==Origen_alternativo;
+    if(Target == 8'b01010001 && Origen == 8  )Origen ==Origen_alternativo;
+    if(Target == 8'b01010010 && Origen == 9  )Origen ==Origen_alternativo;
+    if(Target == 8'b01010011 && Origen == 10 )Origen ==Origen_alternativo;
+    if(Target == 8'b01010100 && Origen == 11 )Origen ==Origen_alternativo;
+    if(Target == 8'b00010101 && Origen == 12 )Origen ==Origen_alternativo;
+    if(Target == 8'b00100101 && Origen == 13 )Origen ==Origen_alternativo;
+    if(Target == 8'b00110101 && Origen == 14 )Origen ==Origen_alternativo;
+    if(Target == 8'b01000101 && Origen == 15 )Origen ==Origen_alternativo;}
   
 //Esto para que el origen  sea igual al destino
 
   constraint orin_equal_dtny {
-    if(Target == 8'b00000001 )Origen <=0;
-    if(Target == 8'b00000010 )Origen <=1;
-    if(Target == 8'b00000011 )Origen <=2;
-    if(Target == 8'b00000100 )Origen <=3;
-    if(Target == 8'b00010000 )Origen <=4;
-    if(Target == 8'b00100000 )Origen <=5;
-    if(Target == 8'b00110000 )Origen <=6;
-    if(Target == 8'b01000000 )Origen <=7;
-    if(Target == 8'b01010001 )Origen <=8;
-    if(Target == 8'b01010010 )Origen <=9;
-    if(Target == 8'b01010011 )Origen <=10;
-    if(Target == 8'b01010100 )Origen <=11;
-    if(Target == 8'b00010101 )Origen <=12;
-    if(Target == 8'b00100101 )Origen <=13;
-    if(Target == 8'b00110101 )Origen <=14;
-    if(Target == 8'b01000101 )Origen <=15;}
+    if(Target == 8'b00000001 )Origen ==0;
+    if(Target == 8'b00000010 )Origen ==1;
+    if(Target == 8'b00000011 )Origen ==2;
+    if(Target == 8'b00000100 )Origen ==3;
+    if(Target == 8'b00010000 )Origen ==4;
+    if(Target == 8'b00100000 )Origen ==5;
+    if(Target == 8'b00110000 )Origen ==6;
+    if(Target == 8'b01000000 )Origen ==7;
+    if(Target == 8'b01010001 )Origen ==8;
+    if(Target == 8'b01010010 )Origen ==9;
+    if(Target == 8'b01010011 )Origen ==10;
+    if(Target == 8'b01010100 )Origen ==11;
+    if(Target == 8'b00010101 )Origen ==12;
+    if(Target == 8'b00100101 )Origen ==13;
+    if(Target == 8'b00110101 )Origen ==14;
+    if(Target == 8'b01000101 )Origen ==15;}
 
 
 
@@ -128,9 +128,6 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
              this.delay
              );
   endfunction
-  
-  
-
   
 endclass
 

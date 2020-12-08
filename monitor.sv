@@ -86,7 +86,7 @@ class monitor #(parameter pckg_sz=40);
 					item = new();
 					mlbx_dvc[auto_i].get(item);
 					to_chckr_mlbx_p.put(item);
-					item.print("[Monitor] Transacción enviada al checker");
+					item.print("[Monitor] Transaccion enviada al checker");
 				end
 			join_none
 		end

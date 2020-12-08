@@ -15,9 +15,11 @@ class Generador_Agent#(parameter pckg_sz=40);
    mlbx_aGENte_sb mlbx_aGENte_sb0;          //buzon que va hacia el Scoreboard
    mlbx_top_aGENte   mlbx_top_aGENte0;      //buzon que se ocupa para tener las transacciones especificas
    Trans_top #(.pckg_sz(pckg_sz)) item_top; //creamos una nueva transacción de un escenario
+   bit posible_error;
+   bit dstn_eq_orin;
    rand int iter;
-  constraint cons_iter{3<=iter;iter<=300;}
-  tipos_llenado tipo_llenado;               //handler del tipo llenado de la transaccion
+   constraint cons_iter{3<=iter;iter<=300;}
+   tipos_llenado tipo_llenado;               //handler del tipo llenado de la transaccion
    
 
   task run();//task donde corre el generador
@@ -27,7 +29,28 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado aleatorio", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
-               item=new();
+                item=new();  
+                if(posible_error)begin
+                  item.dtny_error.constraint_mode(1);       //Se enciende el constraint de mensajes con errores
+                  item.limittar.constraint_mode(0);         //Se apaga el constraint de mensajes sin errores
+                  $display("Posible errror");
+                end else begin
+                  item.dtny_error.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.limittar.constraint_mode(1);         //Se enciende el constraint destino =origen     
+                  $display("Mensaje sin errores");
+                end
+
+                if (dstn_eq_orin)begin
+                  item.orin_dist_dtny.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(1);         //Se enciende el constraint destino =origen
+                  item.limitorin.constraint_mode(0);         //apago constraint
+                  $display("Destino = origen");
+                end else begin
+                  item.orin_dist_dtny.constraint_mode(1);          //Se enciende el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen  
+                  item.limitorin.constraint_mode(0);         //apago constraint                
+                  $display("Dest != orin");
+                end                           
                item.randomize();//generamos los valores aleatorios
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     
@@ -45,6 +68,26 @@ class Generador_Agent#(parameter pckg_sz=40);
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
                 item=new();
+                if(posible_error)begin
+                  item.dtny_error.constraint_mode(1);       //Se enciende el constraint de mensajes con errores
+                  item.limittar.constraint_mode(0);         //Se apaga el constraint de mensajes sin errores
+                  $display("Posible errror");
+                end else begin
+                  item.dtny_error.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.limittar.constraint_mode(1);         //Se enciende el constraint destino =origen     
+                  $display("Mensaje sin errores");
+                end
+
+                if (dstn_eq_orin)begin
+                  item.orin_dist_dtny.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(1);         //Se enciende el constraint destino =origen
+                  $display("Destino = origen");
+                end else begin
+                  item.orin_dist_dtny.constraint_mode(1);          //Se enciende el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen     
+                  $display("Dest != orin");
+                end               
+
                 item.randomize();//generamos los valores aleatorios       
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
@@ -61,7 +104,27 @@ class Generador_Agent#(parameter pckg_sz=40);
           begin 
             $display("[T=%0t] [Generador] Se ha escogido la transaccion de llenado especifico", $time);
             for (int i = 0; i < iter; i++) begin//en este ciclo se crean las transacciones
-                item=new();//creamos una nueva transacción
+                item=new();
+                if(posible_error)begin
+                  item.dtny_error.constraint_mode(1);       //Se enciende el constraint de mensajes con errores
+                  item.limittar.constraint_mode(0);         //Se apaga el constraint de mensajes sin errores
+                  $display("Posible errror");
+                end else begin
+                  item.dtny_error.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.limittar.constraint_mode(1);         //Se enciende el constraint destino =origen     
+                  $display("Mensaje sin errores");
+                end
+
+                if (dstn_eq_orin)begin
+                  item.orin_dist_dtny.constraint_mode(0);          //Se apaga el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(1);         //Se enciende el constraint destino =origen
+                  $display("Destino = origen");
+                end else begin
+                  item.orin_dist_dtny.constraint_mode(1);          //Se enciende el constraint destino != origen 
+                  item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen     
+                  $display("Dest != orin");
+                end               
+
                 item.randomize();//generamos los valores aleatorios        
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
