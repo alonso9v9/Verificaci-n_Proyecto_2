@@ -361,7 +361,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 							from_drvr_item=new();	
 							$display("%g %g",auto_i,i);
 							from_drvr_mlbx[auto_i].get(from_drvr_item);
-							if ((from_drvr_item.Target == 0) & (from_drvr_item.mode == 0) & (from_drvr_item.payload == 0)) begin
+							if (!((from_drvr_item.Target == 0) && (from_drvr_item.mode == 0) && (from_drvr_item.payload == 0))) begin
 								from_drvr_item.print("[Checker] Transacción recibida del Driver");
 								foreach(dir[j]) begin
 									if (dir[j] == from_drvr_item.Target) begin
