@@ -63,34 +63,45 @@ class monitor #(parameter pckg_sz=40);
 	// Para sincronizar la comunicacion con el checker
 	// semaphore sem;
 
+	function new();
+
+		foreach(dvcs[i]) begin
+
+		   this.dvcs[i] = new();
+		   this.dvcs[i].to_chckr_mlbx=new();
+		   this.mlbx_dvc[i]=new();
+		   this.dvcs[i].tag = i;
+		   this.dvcs[i].to_chckr_mlbx = mlbx_dvc[i];
+		   $display("todos los dvcs inicializados");
+		end
+	endfunction 
+
 	task run();
 		// sem = new(1);
-		$display("[T=%g] El monitor fue inicializado.", $time);
-		foreach(dvcs[i]) begin
-			automatic int auto_i = i;
-			mlbx_dvc[auto_i] = new();
-			dvcs[auto_i] = new();
-			fork
-				begin
-					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
-					dvcs[auto_i].vif = vif;
-					dvcs[auto_i].run();
-				end
-			join_none
+
+		begin 
+			$display("[T=%g] El monitor fue inicializado.", $time);
+			foreach(this.dvcs[i]) begin
+				automatic int auto_i = i;
+				mlbx_dvc[auto_i] = new();
+				fork
+					begin
+						this.dvcs[auto_i].run();
+					end
+				join_none
+			end
+			foreach(this.dvcs[i]) begin
+				automatic int auto_i = i;
+				fork
+					forever begin 
+						item = new();
+						this.dvcs[auto_i].to_chckr_mlbx.get(item);
+						to_chckr_mlbx_p.put(item);
+						item.print("[Monitor] Transaccion enviada al checker");
+					end
+				join_none
+			end
 		end
-		foreach(dvcs[i]) begin
-			automatic int auto_i = i;
-			fork
-				forever begin 
-					item = new();
-					dvcs[auto_i].to_chckr_mlbx.get(item);
-					to_chckr_mlbx_p.put(item);
-					item.print("[Monitor] Transaccion enviada al checker");
-				end
-			join_none
-		end
-		
 	endtask
 
 endclass

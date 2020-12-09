@@ -111,9 +111,15 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
       disp_inst[i].vif = _if;
     end
 
+
+
     chckr_inst.vif = emu_if;
 
     monitor_inst.vif =_if;
+
+    foreach(monitor_inst.dvcs[i]) begin
+      monitor_inst.dvcs[i].vif = _if;
+    end
     $display("[%g]  El ambiente fue inicializado",$time);
     fork
       driver_inst.run();
