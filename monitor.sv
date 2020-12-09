@@ -70,6 +70,7 @@ class monitor #(parameter pckg_sz=40);
 			automatic int auto_i = i;
 			mlbx_dvc[auto_i] = new();
 			dvcs[auto_i] = new();
+			dvcs[auto_i].to_chckr_mlbx=new();
 			fork
 				begin
 					dvcs[auto_i].tag = auto_i;
