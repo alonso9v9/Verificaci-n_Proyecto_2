@@ -84,7 +84,7 @@ class monitor #(parameter pckg_sz=40);
 			fork
 				forever begin 
 					item = new();
-					mlbx_dvc[auto_i].get(item);
+					dvcs[auto_i].to_chckr_mlbx.get(item);
 					to_chckr_mlbx_p.put(item);
 					item.print("[Monitor] Transaccion enviada al checker");
 				end
