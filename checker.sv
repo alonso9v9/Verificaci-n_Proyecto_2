@@ -382,7 +382,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 											// Igualo el item recibido del mntr al que se va a enviar al sb para evitar modificar el item recibido
 											to_sb_item = from_mntr_item;
 											// Se calcula el delay de la transacción
-											to_sb_item.delayO = from_mntr_item.delayO - sb_generadas[i][j].tiempo;
+											to_sb_item.latencia = from_mntr_item.delayO - sb_generadas[i][j].tiempo;
 											// Se envía la transacción completada al sb								
 											to_sb_mlbx.put(to_sb_item);
 											$display("[T=%g] [Checker] Transacción correcta.",$time);
@@ -427,17 +427,13 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	task check(mlbx_drv_disp from_drvr_mlbx, Trans_in from_drvr_item, Trans_in sb_generadas [$]);
 		forever begin
 			from_drvr_mlbx.get(from_drvr_item);
-			if (!((from_drvr_item.Target == 0) && (from_drvr_item.mode == 0) && (from_drvr_item.payload == 0))) begin
-				from_drvr_item.print("[Checker] Transacción recibida del Driver");
-				foreach(dir[j]) begin
-					$display("Buscando direccion------------------------------------------------------");
-					if (dir[j] == from_drvr_item.Target) begin
-						sb_generadas.push_front(from_drvr_item);
-						$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
-					end
+			from_drvr_item.print("[Checker] Transacción recibida del Driver");
+			foreach(dir[j]) begin
+				$display("Buscando direccion------------------------------------------------------");
+				if (dir[j] == from_drvr_item.Target) begin
+					sb_generadas.push_front(from_drvr_item);
+					$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
 				end
-			end else begin 
-				$display("[T=%g] [Checker] [ERROR] CEROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOS", $time);
 			end
 		end
 	endtask : check
