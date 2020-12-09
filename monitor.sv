@@ -65,33 +65,39 @@ class monitor #(parameter pckg_sz=40);
 
 	task run();
 		// sem = new(1);
-		$display("[T=%g] El monitor fue inicializado.", $time);
-		foreach(dvcs[i]) begin
-			automatic int auto_i = i;
-			mlbx_dvc[auto_i] = new();
-			dvcs[auto_i] = new();
-			dvcs[auto_i].to_chckr_mlbx=new();
-			fork
-				begin
-					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
-					dvcs[auto_i].vif = vif;
-					dvcs[auto_i].run();
+		fork
+			begin 
+				$display("[T=%g] El monitor fue inicializado.", $time);
+				foreach(dvcs[i]) begin
+					automatic int auto_i = i;
+					mlbx_dvc[auto_i] = new();
+					dvcs[auto_i] = new();
+					dvcs[auto_i].to_chckr_mlbx=new();
+					fork
+						begin
+							dvcs[auto_i].tag = auto_i;
+							dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
+							dvcs[auto_i].vif = vif;
+							dvcs[auto_i].run();
+						end
+					join_none
 				end
-			join_none
-		end
-		foreach(dvcs[i]) begin
-			automatic int auto_i = i;
-			fork
-				forever begin 
-					item = new();
-					dvcs[auto_i].to_chckr_mlbx.get(item);
-					to_chckr_mlbx_p.put(item);
-					item.print("[Monitor] Transaccion enviada al checker");
+			end
+			begin
+
+				foreach(dvcs[i]) begin
+					automatic int auto_i = i;
+					fork
+						forever begin 
+							item = new();
+							dvcs[auto_i].to_chckr_mlbx.get(item);
+							to_chckr_mlbx_p.put(item);
+							item.print("[Monitor] Transaccion enviada al checker");
+						end
+					join_none
 				end
-			join_none
-		end
-		
+			end
+		join_none
 	endtask
 
 endclass
