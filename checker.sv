@@ -320,7 +320,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 
 	// Transacciones
 	Trans_out #(.pckg_sz(pckg_sz)) from_mntr_item; 			// Del monitor
-	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item[16];  	// Del scoreboard
+	Trans_in #(.pckg_sz(pckg_sz)) from_drvr_item;  	// Del scoreboard
 	Trans_out #(.pckg_sz(pckg_sz)) to_sb_item; 				// Hacia el scoreboard
 
 	// Interfaz virtual para conectar el emulador del mesh al driver
@@ -352,27 +352,26 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 
 		fork
 			// Recepcion de transacciones del driver
-			begin
-				$display("[T=%g] El checker fue inicializado.", $time);
-				foreach(from_drvr_mlbx[i]) begin
-					automatic int auto_i = i;
-					fork
-						forever begin
-							from_drvr_item[auto_i]=new();	
-							$display("%g %g",auto_i,i);
-							from_drvr_mlbx[auto_i].get(from_drvr_item[auto_i]);
-						
-							from_drvr_item[auto_i].print("[Checker] Transacción recibida del Driver");
-							foreach(dir[j]) begin
-								if (dir[j] == from_drvr_item[auto_i].Target) begin
-									sb_generadas[j].push_front(from_drvr_item[auto_i]);
-									$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
-								end
+
+			$display("[T=%g] El checker fue inicializado.", $time);
+			foreach(from_drvr_mlbx[i]) begin
+				automatic int auto_i = i;
+				fork
+					forever begin
+						from_drvr_item=new();	
+						from_drvr_mlbx[auto_i].get(from_drvr_item);
+					
+						from_drvr_item.print("[Checker] Transacción recibida del Driver");
+						foreach(dir[j]) begin
+							if (dir[j] == from_drvr_item.Target) begin
+								sb_generadas[j].push_front(from_drvr_item);
+								$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
 							end
-						end 	
-					join_none
-				end
+						end
+					end 	
+				join_none
 			end
+
 			// Recepcion de transacciones del monitor y chequeo
 			begin
 				$display("[T=%g] [Checker] Esperando mbx",$time);
