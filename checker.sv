@@ -328,7 +328,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 
 	// Transacciones recibidas del scoreboard
 	// Cada transacción generada por el agente se guarda en un queue según el destino de la transacción
-	mlbx_mntr_chckr sb_generadas [16]; 	// Se crea un queue para cada dispositivo
+	Trans_in sb_generadas [16][$]; 	// Se crea un queue para cada dispositivo
 
 
 	Trans_out sb_rec_inc [$]; 	   	// Este queue guardará las transacciones recibidas en el monitor que no se generaron por el test

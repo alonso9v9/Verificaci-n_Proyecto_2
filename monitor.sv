@@ -74,7 +74,6 @@ class monitor #(parameter pckg_sz=40);
 			fork
 				begin
 					dvcs[auto_i].tag = auto_i;
-					dvcs[auto_i].to_chckr_mlbx = mlbx_dvc[auto_i];
 					dvcs[auto_i].vif = vif;
 					dvcs[auto_i].run();
 				end
