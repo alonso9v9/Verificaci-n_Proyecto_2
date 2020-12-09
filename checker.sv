@@ -429,7 +429,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 			from_drvr_mlbx.get(from_drvr_item);
 			from_drvr_item.print("[Checker] Transacción recibida del Driver");
 			foreach(dir[j]) begin
-				$display("Buscando direccion------------------------------------------------------");
+				//$display("Buscando direccion------------------------------------------------------");
 				if (dir[j] == from_drvr_item.Target) begin
 					sb_generadas.push_front(from_drvr_item);
 					$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
