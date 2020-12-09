@@ -58,7 +58,7 @@ class monitor #(parameter pckg_sz=40);
 	mlbx_mntr_chckr mlbx_dvc[16];			// Mailboxes para cada dispositivo
 	read_dvc #(.pckg_sz(pckg_sz)) dvcs [16];
 
-	Trans_out #(.pckg_sz(pckg_sz)) item;
+	Trans_out #(.pckg_sz(pckg_sz)) item [16];
 
 	// Para sincronizar la comunicacion con el checker
 	// semaphore sem;
@@ -83,15 +83,20 @@ class monitor #(parameter pckg_sz=40);
 		foreach(dvcs[i]) begin
 			automatic int auto_i = i;
 			fork
-				forever begin 
-					item = new();
-					dvcs[auto_i].to_chckr_mlbx.get(item);
-					to_chckr_mlbx_p.put(item);
-					item.print("[Monitor] Transaccion enviada al checker");
-				end
+				to_checker(item[auto_i], dvcs[auto_i].to_chckr_mlbx, to_chckr_mlbx_p);
 			join_none
 		end
 		
 	endtask
+
+	task to_checker(Trans_out item, mlbx_mntr_chckr to_chckr_mlbx, mlbx_mntr_chckr to_chckr_mlbx_p);
+		forever begin 
+			item = new();
+			to_chckr_mlbx.get(item);
+			item.print("[Monitor] Transaccion preparada para enviar al checker");
+			to_chckr_mlbx_p.put(item);
+			item.print("[Monitor] Transaccion enviada al checker");
+		end
+	endtask : to_checker
 
 endclass
