@@ -357,12 +357,12 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 				foreach(from_drvr_mlbx[i]) begin
 					automatic int auto_i = i;
 					fork
-						check(from_drvr_mlbx[auto_i], from_drvr_item[auto_i], sb_generadas[auto_i]);
+						check(from_drvr_mlbx[auto_i], from_drvr_item[auto_i]);
 					join_none
 				end
 			end
 			// Recepcion de transacciones del monitor y chequeo
-			begin
+			begin  
 				$display("[T=%g] [Checker] Esperando mbx",$time);
 				forever begin
 					from_mntr_mlbx.get(from_mntr_item);
@@ -424,13 +424,13 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		end
 	endtask : run
 
-	task check(mlbx_drv_disp from_drvr_mlbx, Trans_in from_drvr_item, Trans_in sb_generadas [$]);
+	task check(mlbx_drv_disp from_drvr_mlbx, Trans_in from_drvr_item);
 		forever begin
 			from_drvr_mlbx.get(from_drvr_item);
 			from_drvr_item.print("[Checker] Transacción recibida del Driver");
 			foreach(dir[j]) begin
 				if (dir[j] == from_drvr_item.Target) begin
-					sb_generadas.push_front(from_drvr_item);
+					this.sb_generadas[j].push_front(from_drvr_item);
 					$display("[T=%g] [Checker] Transacción recibida guardada en dvc %g",$time,j);
 				end
 			end
