@@ -202,8 +202,3 @@ typedef mailbox #(Trans_top)mlbx_top_aGENte;               //MAILBOX TOP-GENERAD
 
 typedef enum{esc1_pru1, esc1_pru2,esc1_pru3, esc1_pru4, esc2_pru1, esc2_pru2, esc2_pru3} tipos_pruebas;
 
-
-//********************************DEFINICION DE LAS PRUEBAS**************************************
-
-
-//***********************************************************************************************

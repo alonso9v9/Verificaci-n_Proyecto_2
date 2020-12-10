@@ -32,7 +32,6 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
   inst_amb.top_aGENte_mbx = top_aGENte_mbx;  //igualo los mailboxes
   inst_amb.aGen_inst.mlbx_top_aGENte0 = top_aGENte_mbx;  //igualo los mailboxes
 
-   // inst_amb.aGen_inst.tipo_llenado=tipo_llenado;
     
   endfunction
 
