@@ -26,6 +26,7 @@ class scoreboard #(parameter pckg_sz);
     string lat;
     string linea_csv;
     string muestra;
+    string modo;
 
 	function new ();
 
@@ -96,7 +97,8 @@ class scoreboard #(parameter pckg_sz);
 	    t_recib.itoa(from_chckr_item.delayO);
         lat.itoa(from_chckr_item.latencia);
         muestra.itoa(cont);
-        linea_csv = {muestra,",",d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
+        modo.hextoa(from_chckr_item.modeO);
+        linea_csv = {muestra,",",d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat,",",modo};
         $system($sformatf("echo %0s, %0s >> output.csv",linea_csv,from_chckr_item.tipo));
     endfunction
 
