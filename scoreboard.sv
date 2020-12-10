@@ -25,7 +25,7 @@ class scoreboard #(parameter pckg_sz);
 	string t_recib;
     string lat;
     string linea_csv;
-    string tiempo;
+    string muestra;
 
 	function new ();
 
@@ -40,8 +40,7 @@ class scoreboard #(parameter pckg_sz);
 	task run(event fin, event sb_done);
 
 		$display("[T=%g] El scoreboard fue inicializado.",$time);
-		//$system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
-		$system("echo > output.csv");
+		$system("echo 'Muestra, Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
 		fork
 			run_sb_gen;
 			run_sb_chckr;
@@ -84,21 +83,20 @@ class scoreboard #(parameter pckg_sz);
 			av_delay=(av_delay+from_chckr_item.latencia)/cont;
 			// Se guarda la transacción completada en sb_completadas
 			sb_completadas.push_front(from_chckr_item);
-			newRowOut(from_chckr_item);
+			newRowOut(from_chckr_item, cont);
 
 		end
 	endtask : run_sb_chckr
 
-	function void newRowOut(const ref Trans_out from_chckr_item);
+	function void newRowOut(const ref Trans_out from_chckr_item, int cont);
 	    d_env.hextoa(from_chckr_item.payloadO);
 	    destino.itoa(from_chckr_item.dvc);
 	    origen.itoa(from_chckr_item.Origen);
 	    t_envio.itoa(from_chckr_item.tiempo_envio);
 	    t_recib.itoa(from_chckr_item.delayO);
         lat.itoa(from_chckr_item.latencia);
-        tiempo.itoa($time);
-        linea_csv = {$time,",",lat};
-        //linea_csv = {d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
+        muestra.itoa(cont);
+        linea_csv = {muestra,",",d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
         $system($sformatf("echo %0s, %0s >> output.csv",linea_csv,from_chckr_item.tipo));
     endfunction
 
