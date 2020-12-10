@@ -51,6 +51,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir
 						vif.pndng_i_in[id]=0;
 					end
 					Fifo_in.pop_back();
+				end
 			end
 			begin
 				forever begin
