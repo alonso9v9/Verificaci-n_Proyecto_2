@@ -21,7 +21,7 @@
 `include "Rand_Parameters.sv"
 
 
-import Rand_Parameters::*;
+import Rand_Parameters::*;   //Se importa el archivo que contiene los parametros aleatorizados
 
 
 ////////////////////////// Módulo superior para correr la prueba //////////////////////////
@@ -32,29 +32,28 @@ module test_bench;
   reg clk;
   int seed;
 
-  event fin;      //// Evento utilizado por el checker y el sb para generar reportes finales
-  event sb_done;  //// Indica cuando el sb termina de generar el reporte final
-  intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));
+  event fin;           // Evento utilizado por el checker y el sb para generar reportes finales
+  event sb_done;       // Indica cuando el sb termina de generar el reporte final
+  intfz #(.pckg_sz(pckg_sz))_if (.clk(clk));   //Se define la interfaz
 
-  intfz #(.pckg_sz(pckg_sz))emu_if (.clk(clk));
+  intfz #(.pckg_sz(pckg_sz))emu_if (.clk(clk));  //Se define la interfaz de la emulacion
 
-  always #5 clk=~clk;
-
+  always #5 clk=~clk;                            //Se crea el CLK
+                                                 //Se Instancia el DUT
   mesh_gnrtr #(.ROWS(ROWS),.COLUMS(COLUMS),.pckg_sz(pckg_sz),.fifo_depth(fifo_depth),.bdcst(bdcst)) uut 
   (.pndng(_if.pndng),.data_out(_if.data_out), .popin(_if.popin),.pop(_if.pop),
   	.data_out_i_in(_if.data_out_i_in),.pndng_i_in(_if.pndng_i_in),.clk(_if.clk),.reset(_if.reset));
 
 
-
-  assign emu_if.reset = _if.reset;
+  assign emu_if.reset = _if.reset;                        //Conexion de señales de la interfaz 
   assign emu_if.data_out_i_in = _if.data_out_i_in;
   assign emu_if.pndng_i_in = _if.pndng_i_in;
   assign emu_if.pop = _if.pop;
   
 
-  Top #(.pckg_sz(pckg_sz),.disps(16), .fifo_depth(fifo_depth)) inst_top;
+  Top #(.pckg_sz(pckg_sz),.disps(16), .fifo_depth(fifo_depth)) inst_top;      //Instancia de la Clase Top
   
-  initial begin
+  initial begin                                           //Definicion del CLK de la interfase
   	clk = 0;
     _if.reset = 1;
     #10
@@ -62,14 +61,14 @@ module test_bench;
     inst_top=new();
     inst_top._if=_if;
     
-    seed=10; //Seed a utilizar en el test
+    seed=10;                                             //Seed a utilizar en el test               
 
     fork
-       inst_top.run(fin, sb_done,seed);
+       inst_top.run(fin, sb_done,seed);                  //Corre la instancia de la clase top
     join_none
   end
   
-  always@(posedge clk) begin
+  always@(posedge clk) begin                             //Aqui se muere el Testbench si alcanza el tiempo limite
     if ($time > 500000)begin
       $display("Test_bench: Tiempo limite de prueba en el test_bench alcanzado");
       -> fin;

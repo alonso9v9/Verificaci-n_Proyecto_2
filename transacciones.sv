@@ -44,14 +44,14 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
   tipos_accion tipo;
   int tiempo;
 
-  // Restringir las direcciones al aleatorizar
+  // Constraints para que las direcciones de Target y de Origen sean validas
   constraint limittar {Target inside {8'b00000001, 8'b00000010,8'b00000011,8'b00000100,8'b00010000,8'b00100000,8'b00110000,8'b01000000,8'b01010001,8'b01010010,8'b01010011,8'b01010100,8'b00010101,8'b00100101,8'b00110101,8'b01000101};}
-  constraint limitorin {0<=Origen;Origen<=15;}
+  constraint limitorin {0<=Origen;Origen<=15;} 
   constraint limitorin_alter {0<=Origen_alternativo;Origen_alternativo<=15;}
   constraint orin_alter_distinto {Origen_alternativo!=Origen;}
-  constraint limitdly {0<=delay;delay<=10;}
+  constraint limitdly {0<=delay;delay<=10;} //Constraint para el delay sea un valor entre 0 y 10
   
-  
+  //Constraint para generar destinos con errores(on/off)
   constraint dtny_error {Target dist {
     8'b00000001:=10,                                   
     8'b00000010:=10,
@@ -74,7 +74,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
     8'b11111111:=100,            //Direccion no existente
     8'b00000000:=100};}          //Direccion no existente
    
-//Esto para que el origen no sea igual al destino
+//Constraint para que el origen sea distinto al destino
 
   constraint orin_dist_dtny {
     if(Target == 8'b00000001 && Origen == 0  )Origen ==Origen_alternativo;
@@ -94,7 +94,7 @@ class Trans_in#(parameter pckg_sz=40);//transaccion del mensaje que entra al DUT
     if(Target == 8'b00110101 && Origen == 14 )Origen ==Origen_alternativo;
     if(Target == 8'b01000101 && Origen == 15 )Origen ==Origen_alternativo;}
   
-//Esto para que el origen  sea igual al destino
+//Esto para que el origen  sea igual al destino (on/off)
 
   constraint orin_equal_dtny {
     if(Target == 8'b00000001 )Origen ==0;

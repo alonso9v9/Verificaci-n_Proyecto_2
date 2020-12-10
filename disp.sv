@@ -9,19 +9,18 @@
 // Este script esta estructurado en System Verilog
 
 
-class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
-	
-    virtual intfz #(.pckg_sz(pckg_sz)) vif;
+class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir cada uno de los wrapper los 16 dispositivos
+    virtual intfz #(.pckg_sz(pckg_sz)) vif;                 //Definicion de la interfaz virtual
 
-    bit [pckg_sz-1:0] Data;
+    bit [pckg_sz-1:0] Data;                                 //Definicion del mensajes                                             
 
-    mlbx_drv_disp drv_disp_mbx;
+    mlbx_drv_disp drv_disp_mbx;                             //Se instancia el mailbox driver-dispositivo
 
     // Para enviar las transacciones ejecutadas al checker
     // Primero van al driver y de ahí al chekcer
-    mlbx_drv_disp disp_chckr_mbx;
-    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
-    bit [pckg_sz-1:0] pickup;
+    mlbx_drv_disp disp_chckr_mbx;                           //Se instancia el mailbox disposito-checker
+    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;                 //Aqui se instancia la transaccion de entrada
+    bit [pckg_sz-1:0] pickup;       
 
     bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
     int espera;
