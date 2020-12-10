@@ -53,8 +53,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                 end
                 item.srandom(seed);// Se asigna el seed        
                 item.randomize();//generamos los valores aleatorios
-                seed=seed+1;
-                $display("%g",seed);
+
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     
                     mlbx_aGENte_sb0.put(item);//manda el item hacia el scoreboard
@@ -92,9 +91,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                 end               
 
                 item.srandom(seed);// Se asigna el seed        
-                item.randomize();//generamos los valores aleatorios
-                seed=seed+1;
-                 $display("%g",seed);    
+                item.randomize();//generamos los valores aleatorios    
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
                         item.payload  =  item_top.pyld_espec;
@@ -132,9 +129,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                 end               
 
                 item.srandom(seed);// Se asigna el seed        
-                item.randomize();//generamos los valores aleatorios
-                seed=seed+1;
-                 $display("%g",seed);        
+                item.randomize();//generamos los valores aleatorios        
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
                         item.Target   =  item_top.dstny_espec;
