@@ -30,6 +30,7 @@ import Rand_Parameters::*;
 
 module test_bench;
   reg clk;
+  int seed;
 
   event fin;      //// Evento utilizado por el checker y el sb para generar reportes finales
   event sb_done;  //// Indica cuando el sb termina de generar el reporte final
@@ -74,8 +75,10 @@ module test_bench;
     inst_top=new();
     inst_top._if=_if;
     
+    seed=10; //Seed a utilizar en el test
+
     fork
-       inst_top.run(fin, sb_done);
+       inst_top.run(fin, sb_done,seed);
     join_none
   end
   
