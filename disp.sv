@@ -83,7 +83,6 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 						
 						normal:begin
 		      				Fifo_in.push_front(Data);
-		      				$display("%b",Fifo_in[$]);
 		      				vif.data_out_i_in[transaction.Origen]=Fifo_in[$]; 	
 							vif.pndng_i_in[transaction.Origen]=1;
 							transaction.tiempo = $time;

@@ -55,7 +55,7 @@ class scoreboard #(parameter pckg_sz);
 			
 			from_agnt_mlbx.get(from_agnt_item);
 			// Se guarda el item recibido del generador en la lista correspondiente al destino del item
-			from_agnt_item.print("[Scoreboard] Transacción recibida del Generador.");
+			from_agnt_item.print("[Scoreboard] Transaccion recibida del Generador.");
 			foreach(dir[i]) begin
 				if (dir[i] == from_agnt_item.Target) begin
 					sb_generadas[i].push_front(from_agnt_item);
@@ -72,7 +72,7 @@ class scoreboard #(parameter pckg_sz);
 		forever begin
 			
 			from_chckr_mlbx.get(from_chckr_item);
-			from_chckr_item.print("[Scoreboard] Transacción completada recibida del Checker.");
+			from_chckr_item.print("[Scoreboard] Transaccion completada recibida del Checker.");
 
 			// Se guarda la transacción completada en sb_completadas
 			sb_completadas.push_front(from_chckr_item);

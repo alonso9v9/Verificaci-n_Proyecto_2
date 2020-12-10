@@ -23,7 +23,7 @@ class Generador_Agent#(parameter pckg_sz=40);
    
 
   task run(int seed);//task donde corre el generador
-    $display("[T=%0t] [Geneeeeee] iter = %p", $time,iter);
+    $display("[T=%0t] [Generador] Generando %p iteraciones", $time,iter);
     case(tipo_llenado) //case para decidir si llenar la transaccion con datos aleatorios o con datos especificador por el usuario
         llenado_aleat: //genera una transaccion aleatoria
           begin 
@@ -49,7 +49,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                   item.orin_dist_dtny.constraint_mode(1);          //Se enciende el constraint destino != origen 
                   item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen  
                   item.limitorin.constraint_mode(1);         //apago constraint                
-                  $display("Dest != orin");
+                  $display("Dest != origen");
                 end
                 item.srandom(seed);// Se asigna el seed        
                 item.randomize();//generamos los valores aleatorios

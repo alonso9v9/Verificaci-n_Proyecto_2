@@ -114,7 +114,7 @@ module arbiter #(parameter pckg_sz = 40, parameter Fif_Size=10, parameter id_r =
 				push_i <= 0;
 				pop_i <= 1;
 			end
-			default : $display("[Emulador: arbiter] Estado inválido");
+			default : $display("[Emulador: arbiter] Estado invalido");
 		endcase
 		estado = estado_sig;
 		Data_in_i <= Data_out_i[cont];
@@ -374,7 +374,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 				$display("[T=%g] [Checker] Esperando mbx",$time);
 				forever begin
 					from_mntr_mlbx.get(from_mntr_item);
-					from_mntr_item.print("[Checker] Transacción recibida del Monitor");
+					from_mntr_item.print("[Checker] Transaccion recibida del Monitor");
 
 					if (sb_generadas.size()) begin
 						int j = (sb_generadas.size()-1);
@@ -387,18 +387,18 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 								to_sb_item.latencia = from_mntr_item.delayO - sb_generadas[j].tiempo;
 								// Se envía la transacción completada al sb								
 								to_sb_mlbx.put(to_sb_item);
-								$display("[T=%g] [Checker] Transacción correcta.",$time);
+								$display("[T=%g] [Checker] Transaccion correcta.",$time);
 								// Saca la transacción de la lista de generadas
 								sb_generadas.delete(j);
 								j = -2;
 							end else j = j-1;
 						end
 						if (j == -1) begin
-							$display("[T=%g] [Checker] [ERROR:01]: Se recibió una transacción no generada por el test para el dispositivo %g", $time,from_mntr_item.TargetO);
+							$display("[T=%g] [Checker] [ERROR:01]: Se recibio una transaccion no generada por el test para el dispositivo %g", $time,from_mntr_item.TargetO);
 							sb_rec_inc.push_front(from_mntr_item); 
 						end
 					end else begin
-						$display("[T=%g] [Checker] [ERROR:02]: Se recibió una transacción no generada por el test para el dispositivo %g", $time,from_mntr_item.TargetO);
+						$display("[T=%g] [Checker] [ERROR:02]: Se recibio una transaccion no generada por el test para el dispositivo %g", $time,from_mntr_item.TargetO);
 						sb_rec_inc.push_front(from_mntr_item); 
 					end
 					//end else begin 
@@ -412,7 +412,7 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		if (sb_generadas.size()) begin
 			$display("[T=%g] [Checker] [ERROR]: %g transacciones no llegaron", $time, sb_generadas.size());
 		end else begin 
-			$display("[T=%g] [Checker] [PASS]: Todas las transacciones generadas se recibieron con éxito", $time);
+			$display("[T=%g] [Checker] [PASS]: Todas las transacciones generadas se recibieron con exito", $time);
 		end
 
 		// Se verifica si se recibieron transacciones incorrectas
@@ -426,9 +426,9 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 	task check(mlbx_drv_disp from_drvr_mlbx, Trans_in from_drvr_item);
 		forever begin
 			from_drvr_mlbx.get(from_drvr_item);
-			from_drvr_item.print("[Checker] Transacción recibida del Driver");
+			from_drvr_item.print("[Checker] Transaccion recibida del Driver");
 			chckr_mux.put(from_drvr_item);
-			$display("[T=%g] [Checker] Transacción guardada en el maibox local",$time);
+			$display("[T=%g] [Checker] Transaccion guardada en el maibox local",$time);
 		end
 	endtask : check
 
