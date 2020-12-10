@@ -16,23 +16,7 @@ class driver #(parameter pckg_sz=40,parameter disps=16,parameter Fif_Size=10);
     mlbx_aGENte_drv aGENte_drv_mbx0;
     mlbx_drv_disp drv_disp_mbx [disps];
 
-    // Para comunicar con el checker:
-    //mlbx_aGENte_drv drvr_chckr_mbx0;
-    //mlbx_drv_disp disp_drv_mbx [disps];
-
-    //Trans_in #(.pckg_sz(pckg_sz)) to_chckr[15:0];
-      //Se define un item
-
     int espera;   
-
-    // Para sincronizar el mlbx hacia el checker
-    // semaphore sem;
-	
-	// function new ();
-	// 	foreach(to_chckr[i]) begin
-	// 		to_chckr[i] = new();
-	// 	end
-	// endfunction
 
 	task run();
 		$display("[T=%g] [Driver] Inicializado",$time);
@@ -80,22 +64,5 @@ class driver #(parameter pckg_sz=40,parameter disps=16,parameter Fif_Size=10);
 			@(posedge vif.clk);
 		end
 	endtask
-
-	// task drvr_chckr_com();
-	// 	// sem = new(1);
-	// 	$display("[T=%g] [Driver] Comunicando con el checker", $time); 
-	// 	foreach(disp_drv_mbx[i]) begin
-	// 		automatic int auto_i = i;
-	// 		fork
-	// 			forever begin
-	// 				to_chckr[auto_i] = new();
-	// 				disp_drv_mbx[auto_i].get(to_chckr[auto_i]);
-	// 				// sem.get(1);
-	// 				drvr_chckr_mbx0.put(to_chckr[auto_i]);	
-	// 				// sem.put(1);
-	// 			end
-	// 		join_none
-	// 	end
-	// endtask : drvr_chckr_com
 
 endclass
