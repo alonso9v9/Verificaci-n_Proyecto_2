@@ -44,19 +44,6 @@ module test_bench;
   (.pndng(_if.pndng),.data_out(_if.data_out), .popin(_if.popin),.pop(_if.pop),
   	.data_out_i_in(_if.data_out_i_in),.pndng_i_in(_if.pndng_i_in),.clk(_if.clk),.reset(_if.reset));
 
-  // Instancia del emulador del mesh
-  /*
-  mesh_emu #(.ROWS(ROWS), .COLUMS(COLUMS), .pckg_sz(pckg_sz), .fifo_depth(fifo_depth)) mesh(
-   .clk          (emu_if.clk),
-   .rst          (emu_if.reset),
-   .pndng        (emu_if.pndng),
-   .data_out     (emu_if.data_out),
-   .popin        (emu_if.popin),
-   .pop          (emu_if.pop),
-   .data_out_i_in(emu_if.data_out_i_in),
-   .pndng_i_in   (emu_if.pndng_i_in)
-  );
-  */
 
 
   assign emu_if.reset = _if.reset;
