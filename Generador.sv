@@ -22,7 +22,7 @@ class Generador_Agent#(parameter pckg_sz=40);
    tipos_llenado tipo_llenado;               //handler del tipo llenado de la transaccion
    
 
-  task run();//task donde corre el generador
+  task run(int seed);//task donde corre el generador
     $display("[T=%0t] [Geneeeeee] iter = %p", $time,iter);
     case(tipo_llenado) //case para decidir si llenar la transaccion con datos aleatorios o con datos especificador por el usuario
         llenado_aleat: //genera una transaccion aleatoria
@@ -50,8 +50,10 @@ class Generador_Agent#(parameter pckg_sz=40);
                   item.orin_equal_dtny.constraint_mode(0);         //Se apaga el constraint destino =origen  
                   item.limitorin.constraint_mode(1);         //apago constraint                
                   $display("Dest != orin");
-                end                           
-               item.randomize();//generamos los valores aleatorios
+                end
+                item.srandom(seed);// Se asigna el seed        
+                item.randomize();//generamos los valores aleatorios
+
                     $display ("[T=%0t] [Generator] Loop:%0d/%0d create next item", $time, i+1, iter);
                     
                     mlbx_aGENte_sb0.put(item);//manda el item hacia el scoreboard
@@ -88,7 +90,8 @@ class Generador_Agent#(parameter pckg_sz=40);
                   $display("Dest != orin");
                 end               
 
-                item.randomize();//generamos los valores aleatorios       
+                item.srandom(seed);// Se asigna el seed        
+                item.randomize();//generamos los valores aleatorios    
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;
                         item.payload  =  item_top.pyld_espec;
@@ -125,6 +128,7 @@ class Generador_Agent#(parameter pckg_sz=40);
                   $display("Dest != orin");
                 end               
 
+                item.srandom(seed);// Se asigna el seed        
                 item.randomize();//generamos los valores aleatorios        
                 //aquí le caemos encima a lo que especifique el usuario
                     mlbx_top_aGENte0.get(item_top) ;

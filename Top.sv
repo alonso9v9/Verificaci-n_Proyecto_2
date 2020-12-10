@@ -20,7 +20,9 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
  
   tipos_pruebas tipo_prueba;
   mlbx_top_aGENte top_aGENte_mbx;
-  tipos_llenado tipo_llenado;  
+  tipos_llenado tipo_llenado; 
+
+  int seed;
  
   parameter py_size=pckg_sz-17;
 
@@ -39,8 +41,11 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
     inst_amb._if   = _if;    //igualo la interfaz virtual
     $display("[T=%0t] [Test] El test fue inicializado", $time);
 
+
+    seed=10;
+
     fork
-       inst_amb.run(fin, sb_done); 
+       inst_amb.run(fin, sb_done,seed); 
     join_none
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +53,6 @@ class Top#(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=10);
                            tipo_prueba    =    esc1_pru4;
 //                                                                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
-    
     case(tipo_prueba)
         esc1_pru1:
         begin
