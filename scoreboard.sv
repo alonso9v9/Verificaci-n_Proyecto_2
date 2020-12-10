@@ -25,6 +25,7 @@ class scoreboard #(parameter pckg_sz);
 	string t_recib;
     string lat;
     string linea_csv;
+    string tiempo;
 
 	function new ();
 
@@ -39,7 +40,8 @@ class scoreboard #(parameter pckg_sz);
 	task run(event fin, event sb_done);
 
 		$display("[T=%g] El scoreboard fue inicializado.",$time);
-		$system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
+		//$system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
+		$system("echo > output.csv");
 		fork
 			run_sb_gen;
 			run_sb_chckr;
@@ -94,7 +96,9 @@ class scoreboard #(parameter pckg_sz);
 	    t_envio.itoa(from_chckr_item.tiempo_envio);
 	    t_recib.itoa(from_chckr_item.delayO);
         lat.itoa(from_chckr_item.latencia);
-        linea_csv = {d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
+        tiempo.itoa($time);
+        linea_csv = {$time,",",lat};
+        //linea_csv = {d_env,",",origen,",",destino,",",t_envio,",",t_recib,",",lat};
         $system($sformatf("echo %0s, %0s >> output.csv",linea_csv,from_chckr_item.tipo));
     endfunction
 
