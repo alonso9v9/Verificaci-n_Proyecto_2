@@ -55,8 +55,8 @@ module test_bench;
   
   initial begin                                           //Definicion del CLK de la interfase
   	clk = 0;
-    _if.reset = 1;
-    #10
+    // _if.reset = 1;
+    // #10
     _if.reset = 0;
     inst_top=new();
     inst_top._if=_if;

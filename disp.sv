@@ -49,6 +49,7 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir
 						Fifo_in.pop_back();
 						vif.data_out_i_in[id]=Fifo_in[$];	
 						if (Fifo_in.size()==0) begin
+							#10
 							vif.pndng_i_in[id]=0;
 						end
 				end
