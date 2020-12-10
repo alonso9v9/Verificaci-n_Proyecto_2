@@ -8,7 +8,7 @@
 // Este script esta estructurado en System Verilog
 
 
-module random;
+module random; //modulo para generar parametros aleatorios
   
   class Params;
     bit [2:0]ROWS = 3'd4; 
