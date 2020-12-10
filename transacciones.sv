@@ -144,7 +144,7 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
     int latencia;
 
   function print  (string tag); // Funcion para imprimir datos
-    $display("[T=%g] %s, Recibido en dvc %g, Target=%b, Modo=%b, Payload=%0b, Delay= %0d, Tipo = %0s",
+    $display("[T=%g] %s, Recibido en dvc %g, Target=%b, Modo=%b, Payload=%0b, T= %0d, Latencia=%0d, Tipo = %0s",
              $time,
              tag,
              this.dvc,
@@ -152,6 +152,7 @@ class Trans_out#(parameter pckg_sz=40);//transaccion del mensaje que entra al DU
              this.modeO,
              this.payloadO,
              this.delayO,
+             this.latencia,
              this.tipo
              );
   endfunction
