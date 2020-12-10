@@ -104,7 +104,7 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     end      
   endfunction
 
-  virtual task run(event fin, event sb_done);
+  virtual task run(event fin, event sb_done,int seed);
 
     driver_inst.vif  = _if;
     foreach(disp_inst[i]) begin
@@ -118,7 +118,7 @@ class ambiente #(parameter pckg_sz =40,parameter disps =16,parameter fifo_depth=
     fork
       driver_inst.run();
       monitor_inst.run();
-      aGen_inst.run();
+      aGen_inst.run(seed);
       sb_inst.run(fin, sb_done);
       chckr_inst.run(fin);
       // driver_inst.drvr_chckr_com();
