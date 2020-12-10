@@ -46,12 +46,12 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir
 			begin
 				forever begin	
 					@(posedge vif.popin[id]);
-					if (Fifo_in.size()==1) begin
-						vif.pndng_i_in[id]=0;
-					end
-					Fifo_in.pop_back();
-					#5
-					vif.data_out_i_in[id]=Fifo_in[$]; 
+						Fifo_in.pop_back();
+						vif.data_out_i_in[id]=Fifo_in[$];	
+						if (Fifo_in.size()==0) begin
+							#10
+							vif.pndng_i_in[id]=0;
+						end
 				end
 			end
 			begin
@@ -60,9 +60,6 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir
 					Trans_in #(.pckg_sz(pckg_sz)) to_chckr = new();  
 					vif.reset=0;
 					espera = 0;
-
-					
-					vif.data_out_i_in[id]=Fifo_in[$]; 
 
 		      		//@(posedge vif.clk);
 		      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion.",$time,id);				
@@ -83,7 +80,8 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);   //Clase para definir
 					case(transaction.tipo)
 						
 						normal:begin
-		      				Fifo_in.push_front(Data); 	
+		      				Fifo_in.push_front(Data); 
+		      				vif.data_out_i_in[id]=Fifo_in[$]; 	
 							vif.pndng_i_in[transaction.Origen]=1;
 							transaction.tiempo = $time;
 			     			transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});

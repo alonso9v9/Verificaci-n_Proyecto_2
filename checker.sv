@@ -365,8 +365,11 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 				forever begin
 					mux_item=new();
 					chckr_mux.get(mux_item);
-					sb_generadas.push_front(mux_item);
+					this.sb_generadas.push_front(mux_item);
 					mux_item.print("[Checker] Transaccion del driver almacenada con exito");
+					foreach(this.sb_generadas[i]) begin
+						sb_generadas[i].print("[CHecker]");
+					end
 				end
 			end
 			// Recepcion de transacciones del monitor y chequeo
@@ -375,21 +378,23 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 				forever begin
 					from_mntr_mlbx.get(from_mntr_item);
 					from_mntr_item.print("[Checker] Transaccion recibida del Monitor");
-
-					if (sb_generadas.size()) begin
-						int j = (sb_generadas.size()-1);
+					foreach(this.sb_generadas[i]) begin
+						sb_generadas[i].print("[CHecker]");
+					end
+					if (this.sb_generadas.size()) begin
+						int j = (this.sb_generadas.size()-1);
 						while (j >= 0) begin
-							if ((from_mntr_item.TargetO == sb_generadas[j].Target) & (from_mntr_item.modeO == sb_generadas[j].mode) & (from_mntr_item.payloadO == sb_generadas[j].payload) & (from_mntr_item.tipo == sb_generadas[j].tipo)) begin
+							if ((from_mntr_item.TargetO == this.sb_generadas[j].Target) & (from_mntr_item.modeO == this.sb_generadas[j].mode) & (from_mntr_item.payloadO == this.sb_generadas[j].payload) & (from_mntr_item.tipo == this.sb_generadas[j].tipo)) begin
 								to_sb_item = new;
 								// Igualo el item recibido del mntr al que se va a enviar al sb para evitar modificar el item recibido
 								to_sb_item = from_mntr_item;
 								// Se calcula el delay de la transacción
-								to_sb_item.latencia = from_mntr_item.delayO - sb_generadas[j].tiempo;
+								to_sb_item.latencia = from_mntr_item.delayO - this.sb_generadas[j].tiempo;
 								// Se envía la transacción completada al sb								
 								to_sb_mlbx.put(to_sb_item);
 								$display("[T=%g] [Checker] Transaccion correcta.",$time);
 								// Saca la transacción de la lista de generadas
-								sb_generadas.delete(j);
+								this.sb_generadas.delete(j);
 								j = -2;
 							end else j = j-1;
 						end
@@ -411,6 +416,9 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		// Se verifica que todas las transacciones se hayan completado
 		if (sb_generadas.size()) begin
 			$display("[T=%g] [Checker] [ERROR]: %g transacciones no llegaron", $time, sb_generadas.size());
+			foreach(sb_generadas[i]) begin
+				sb_generadas[i].print("[CHecker]");
+			end
 		end else begin 
 			$display("[T=%g] [Checker] [PASS]: Todas las transacciones generadas se recibieron con exito", $time);
 		end
@@ -418,6 +426,9 @@ class Checker #(parameter ROWS = 4, parameter COLUMS =4, parameter pckg_sz =40, 
 		// Se verifica si se recibieron transacciones incorrectas
 		if (sb_rec_inc.size()) begin
 			$display("[T=%g] [Checker] [ERROR]: Se recibieron %g transacciones incorrectas en el monitor.", $time, sb_rec_inc.size());
+			foreach(sb_rec_inc[i]) begin
+				sb_rec_inc[i].print("[CHecker]");
+			end
 		end else begin 
 			$display("[T=%g] [Checker] [PASS]: No se recibieron transaccione incorrectas en el monitor.", $time);
 		end

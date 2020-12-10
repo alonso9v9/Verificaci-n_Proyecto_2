@@ -24,7 +24,9 @@ class driver #(parameter pckg_sz=40,parameter disps=16,parameter Fif_Size=10);
 		//Reset del sistema en el primer ciclo de reloj
 		@(posedge vif.clk);
 		vif.reset=1;
-
+		#10
+		vif.reset=0;
+		#50
 		@(posedge vif.clk);
 		forever begin
 			Trans_in #(.pckg_sz(pckg_sz)) transaction; 
