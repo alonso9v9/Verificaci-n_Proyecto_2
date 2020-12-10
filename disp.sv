@@ -20,7 +20,6 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
     // Para enviar las transacciones ejecutadas al checker
     // Primero van al driver y de ahí al chekcer
     mlbx_drv_disp disp_chckr_mbx;
-    Trans_in #(.pckg_sz(pckg_sz)) to_chckr;
     bit [pckg_sz-1:0] pickup;
 
     bit [pckg_sz-1:0] Fifo_in[$:Fif_Size-1];
@@ -45,23 +44,23 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 		$display("[T=%g] [Dispositivo=%g] inicializado.",$time,id);
 		fork
 			begin
-				forever begin
-					@(posedge vif.clk);
-					if(vif.popin[id])begin
-						Fifo_in.pop_back();
-						if (!Fifo_in.size()) begin
+				forever begin	
+					@(posedge vif.popin[id]);
+						vif.data_out_i_in[id]=Fifo_in[$]; 
+						if (Fifo_in.size()==0) begin
 							vif.pndng_i_in[id]=0;
 						end
-					end
+						Fifo_in.pop_back();
 				end
 			end
 			begin
-				forever begin 
-					Trans_in #(.pckg_sz(pckg_sz)) transaction=new(); 
+				forever begin
+					Trans_in #(.pckg_sz(pckg_sz)) transaction=new();
+					Trans_in #(.pckg_sz(pckg_sz)) to_chckr = new(); 
 					vif.reset=0;
 					espera = 0;
 
-					to_chckr = new();
+					vif.data_out_i_in[id]=Fifo_in[$]; 
 
 		      		//@(posedge vif.clk);
 		      		$display("[T=%g] [Dispositivo=%g] Esperando transaccion.",$time,id);				
@@ -83,12 +82,11 @@ class disp #(parameter pckg_sz=40,parameter Fif_Size=10);
 						
 						normal:begin
 		      				Fifo_in.push_front(Data);
-		      				vif.data_out_i_in[transaction.Origen]=Fifo_in[$]; 	
 							vif.pndng_i_in[transaction.Origen]=1;
 							transaction.tiempo = $time;
 			     			transaction.print({"[Dispositivo=",s,"] Transaccion ejecutada."});
 			     			// Envío al checker
-			     			pickup = vif.data_out_i_in[transaction.Origen];
+			     			pickup = Data;
 			     			to_chckr.Target = pickup[pckg_sz-9:pckg_sz-16];
 			     			to_chckr.Origen = transaction.Origen;
 			     			to_chckr.mode = pickup[pckg_sz-17:pckg_sz-17];

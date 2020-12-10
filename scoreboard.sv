@@ -8,6 +8,9 @@ class scoreboard #(parameter pckg_sz);
 
 	Trans_out #(.pckg_sz(pckg_sz)) from_chckr_item; // Item del checker
 
+	real av_delay;
+
+
 	// Transacciones recibidas del agente/gen 
 	// Cada transacción generada por el agente se guarda en un queue según el destino de la transacción
 	Trans_in sb_generadas [16][$]; 	// Se crea un queue para cada dispositivo
@@ -38,12 +41,13 @@ class scoreboard #(parameter pckg_sz);
 	task run(event fin, event sb_done);
 
 		$display("[T=%g] El scoreboard fue inicializado.",$time);
-		 $system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
+		$system("echo 'Dato enviado, Dato recibdo, Terminal de procedencia, Terminal de destino, Tiempo de envío, Tiempo de recibido, Latencia, Modo, Tipo de transacción' > output.csv");
 		fork
 			run_sb_gen;
 			run_sb_chckr;
 		join_none
 		wait (fin.triggered);
+		$display("%g",av_delay);
 		// Generar reportes
 		$display("[T=%g] [Scoreboard] Reporte generado", $time);
 		-> sb_done;
@@ -52,7 +56,6 @@ class scoreboard #(parameter pckg_sz);
 	// Este recibe las transacciones del generador, las guarda en sb_generadas y se las envía al checker
 	task run_sb_gen();
 		forever begin
-			
 			from_agnt_mlbx.get(from_agnt_item);
 			// Se guarda el item recibido del generador en la lista correspondiente al destino del item
 			from_agnt_item.print("[Scoreboard] Transaccion recibida del Generador.");
@@ -69,11 +72,15 @@ class scoreboard #(parameter pckg_sz);
 	// FALTA LO DEL .CSV ///////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////
 	task run_sb_chckr();
+		int cont=0;
+		av_delay=0;
 		forever begin
 			
 			from_chckr_mlbx.get(from_chckr_item);
 			from_chckr_item.print("[Scoreboard] Transaccion completada recibida del Checker.");
-
+			cont=cont+1;
+			av_delay=av_delay*(cont-1);
+			av_delay=(av_delay+from_chckr_item.latencia)/cont;
 			// Se guarda la transacción completada en sb_completadas
 			sb_completadas.push_front(from_chckr_item);
 			newRowOut(from_chckr_item);
