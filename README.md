@@ -1,2 +1,1 @@
-# Verificaci-n_Proyecto_2
-git checkout 26bfd1e50310c8a30e8737b7463774c80a73cf9a
+Detalles en el docmento pdf
